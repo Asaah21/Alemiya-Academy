@@ -1,36 +1,22 @@
-import { useEffect, useState } from 'react'
-import { checkConnection, type ConnectionStatus } from '../lib/supabase'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../features/auth/AuthProvider'
 
-const messages: Record<ConnectionStatus | 'checking', { text: string; style: string }> = {
-  checking: { text: 'Checking database connection…', style: 'bg-slate-100 text-slate-700' },
-  connected: { text: 'Database connected', style: 'bg-green-100 text-green-800' },
-  'not-configured': {
-    text: 'Database not set up yet: add the two Supabase values to the Netlify environment variables',
-    style: 'bg-amber-100 text-amber-900',
-  },
-  unreachable: {
-    text: 'Cannot reach the database: check the Supabase address and public key',
-    style: 'bg-red-100 text-red-800',
-  },
-}
-
+// T04 will replace this with the real menu. For now: a welcome and the one screen that exists.
 export default function Home() {
-  const [status, setStatus] = useState<ConnectionStatus | 'checking'>('checking')
-
-  useEffect(() => {
-    checkConnection().then(setStatus)
-  }, [])
-
-  const m = messages[status]
+  const { state } = useAuth()
+  if (state.status !== 'ready') return null
+  const { profile } = state
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold text-brand">Alemiya Academy</h1>
-        <p className="mt-1 text-slate-600">School management system, version 1</p>
-      </div>
-      <p className={`rounded-xl p-4 text-sm font-medium ${m.style}`}>{m.text}</p>
-      <p className="text-xs text-slate-500">Build step T01: project skeleton</p>
-    </main>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">Welcome, {profile.full_name}</h1>
+      {profile.role === 'admin' ? (
+        <Link to="/setup/users" className="rounded-xl bg-white p-4 font-medium shadow-sm">
+          Users: add staff, reset passwords
+        </Link>
+      ) : (
+        <p className="text-slate-600">More screens arrive in the next build steps.</p>
+      )}
+    </div>
   )
 }

@@ -1,11 +1,8 @@
 // T02 acceptance tests: apply every migration to a real (in-memory) Postgres and check the rules.
 // Supabase's own "auth" schema does not exist here, so a tiny stand-in is created first.
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { PGlite } from '@electric-sql/pglite'
+import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-
-const migrationsDir = join(__dirname, '..', 'migrations')
+import { createTestDb } from './helpers'
 
 const ALL_TABLES = [
   'settings', 'academic_years', 'terms', 'classes', 'subjects', 'class_subjects', 'grade_scale',
@@ -23,16 +20,7 @@ async function one(sql: string, params: unknown[] = []): Promise<string> {
 }
 
 beforeAll(async () => {
-  db = new PGlite()
-  await db.exec(`
-    create schema auth;
-    create table auth.users (id uuid primary key default gen_random_uuid());
-    create function auth.uid() returns uuid language sql as $$ select null::uuid $$;
-  `)
-  const files = readdirSync(migrationsDir).filter((f) => f.endsWith('.sql')).sort()
-  for (const f of files) {
-    await db.exec(readFileSync(join(migrationsDir, f), 'utf8'))
-  }
+  db = await createTestDb()
 
   // One row in every table (also proves every table accepts a valid row)
   await db.exec(`insert into settings (school_name) values ('Alemiya Academy')`)
