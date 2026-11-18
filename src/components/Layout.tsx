@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
 import { menuFor } from '../features/nav/menu'
+import TermBadge from './TermBadge'
 
 // Frame for every logged-in screen: top bar on a phone with a Menu button; side menu on a laptop.
 export default function Layout({ children }: { children: ReactNode }) {
@@ -43,7 +44,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </nav>
 
-      <main className="w-full max-w-3xl flex-1 p-4 md:p-6">{children}</main>
+      <main className="w-full max-w-3xl flex-1 p-4 md:p-6">
+        <TermBadge />
+        {children}
+      </main>
     </div>
   )
 }
