@@ -1,6 +1,9 @@
 import { Route, Routes } from 'react-router-dom'
 import RequireAuth from './components/RequireAuth'
 import Account from './pages/Account'
+import Classes from './pages/Classes'
+import Grades from './pages/Grades'
+import Subjects from './pages/Subjects'
 import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Setup from './pages/Setup'
@@ -23,6 +26,9 @@ export default function App() {
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />
       <Route path="/setup/years" element={<RequireAuth role="admin"><Years /></RequireAuth>} />
+      <Route path="/setup/classes" element={<RequireAuth role="admin"><Classes /></RequireAuth>} />
+      <Route path="/setup/subjects" element={<RequireAuth role="admin"><Subjects /></RequireAuth>} />
+      <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
       <Route path="/setup/users" element={<RequireAuth role="admin"><Users /></RequireAuth>} />
     </Routes>
   )
