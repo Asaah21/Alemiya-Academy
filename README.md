@@ -19,6 +19,18 @@ npm test                       # run the rule tests
 npm run build                  # type-check and build into dist/
 ```
 
+## Database setup (T02)
+
+The database tables are defined in `supabase/migrations/` (seven numbered files). For a new, empty Supabase project:
+
+1. Open Supabase, then **SQL Editor > New query**.
+2. Open `supabase/run_all.sql` in this repository, copy everything, paste it into the editor, and click **Run**.
+3. Check it worked: **Table Editor** should list 23 tables, each marked "RLS enabled". Or run `select count(*) from information_schema.tables where table_schema = 'public';` and expect 23.
+
+Row-level security is switched on with no policies, so the browser can read and write nothing until the access rules are added in T03. That is intended.
+
+Changing the database later: add a new numbered file in `supabase/migrations/`, run `npm run db:bundle`, and run only the new file in Supabase. Run `npm test`: `supabase/tests/schema.test.ts` applies every migration to a local test database and checks the rules (A4 days absent, score limits, payments never edited or deleted, no deletions, history of corrections).
+
 ## Environment variables
 
 | Name | Where to find it | Secret? |
@@ -37,7 +49,9 @@ src/lib/            shared calculations and their tests (attendance, totals, gra
                     balances, turnover). Every business rule in the plan gets a test.
 src/pages/          screens
 supabase/migrations/  database changes, in order (one numbered file per change)
-supabase/tests/       tests for access rules
+supabase/run_all.sql  generated: all migrations in one file for the first setup
+supabase/tests/       database tests (schema, rules, later access rules)
+scripts/              helper scripts (npm run db:bundle)
 netlify/functions/    server code (invites, parent access codes, parent login)
 ```
 
