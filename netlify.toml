@@ -5,6 +5,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # These two VITE_ values are public by design (the browser needs them); stop the secrets scanner failing the build.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY"
 
 # Single-page app: send every path to index.html so links and refreshes work
 [[redirects]]

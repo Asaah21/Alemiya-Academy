@@ -27,7 +27,14 @@ The database tables are defined in `supabase/migrations/` (seven numbered files)
 2. Open `supabase/run_all.sql` in this repository, copy everything, paste it into the editor, and click **Run**.
 3. Check it worked: **Table Editor** should list 23 tables, each marked "RLS enabled". Or run `select count(*) from information_schema.tables where table_schema = 'public';` and expect 23.
 
-Row-level security is switched on with no policies, so the browser can read and write nothing until the access rules are added in T03. That is intended.
+Row-level security is switched on in T02. T03 (`20261118000800_roles_and_policies.sql`) adds the access rules: Admin and Staff roles, and the browser can read or write nothing for anyone without an active profile.
+
+### First Admin (T03)
+
+1. Supabase > Authentication > Sign In / Providers: turn **off** "Allow new users to sign up" (accounts are invite-only).
+2. Supabase > Authentication > Users > Add user > Create new user: the headmaster's email and a password, with **Auto Confirm User** ticked.
+3. SQL Editor: run `supabase/migrations/20261118000800_roles_and_policies.sql`, then `supabase/bootstrap_first_admin.sql` after replacing the name and email placeholders.
+4. Log in at the site. Add everyone else from **Users** (Admin only).
 
 Changing the database later: add a new numbered file in `supabase/migrations/`, run `npm run db:bundle`, and run only the new file in Supabase. Run `npm test`: `supabase/tests/schema.test.ts` applies every migration to a local test database and checks the rules (A4 days absent, score limits, payments never edited or deleted, no deletions, history of corrections).
 
@@ -37,8 +44,9 @@ Changing the database later: add a new numbered file in `supabase/migrations/`, 
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | Supabase > Project Settings > API > Project URL | No |
 | `VITE_SUPABASE_ANON_KEY` | Supabase > Project Settings > API > `anon` public key | No (protected by row-level security) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API > `service_role` key | **Yes**: tick "contains secret values". Used only by `netlify/functions/manage-users.mts` |
 
-Set both in Netlify under Site configuration > Environment variables. **Never** put the `service_role` key in this repository, in front-end code or in chat. It belongs only in Netlify environment variables used by functions in `netlify/functions/`.
+Set all three in Netlify under Site configuration > Environment variables. **Never** put the `service_role` key in this repository, in front-end code or in chat. It belongs only in Netlify environment variables used by functions in `netlify/functions/`.
 
 ## Folder layout
 
