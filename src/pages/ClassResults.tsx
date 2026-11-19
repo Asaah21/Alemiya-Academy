@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PublishPanel from '../features/results/PublishPanel'
 import { useSchool } from '../features/school/SchoolProvider'
 import { computeClassResults, type ScoreRow } from '../lib/results'
 import { supabase } from '../lib/supabase'
@@ -82,10 +83,16 @@ export default function ClassResults() {
       {loading && <p className="text-slate-600">Loading…</p>}
 
       {classId && termId && !loading && !error && (
-        subjects.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes).</p>
+        subjects.length === 0 ? (
+          <>
+            <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes). Classes without scores (such as Creche) can still be published below.</p>
+            {students.length > 0 && <PublishPanel classId={classId} termId={termId} complete />}
+          </>
+        )
         : students.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
         : (
           <>
+            <PublishPanel classId={classId} termId={termId} complete={results.complete} />
             {results.complete ? (
               <p className="rounded-xl bg-green-100 p-4 text-sm text-green-900">Every student has every subject, so positions are shown. Students with equal totals share a position.</p>
             ) : (
