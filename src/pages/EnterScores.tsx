@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
 import type { GradeRow } from '../lib/grades'
@@ -93,7 +94,10 @@ export default function EnterScores() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Enter Scores</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Enter Scores</h1>
+        <Link to="/scores/results" className="text-sm underline">Class results</Link>
+      </div>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
         Type each student's class score (out of {classMax}) and exam score (out of {examMax}). The total and grade are worked out for you. Tick Absent if the student missed the subject.
       </p>

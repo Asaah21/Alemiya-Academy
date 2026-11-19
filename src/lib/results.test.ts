@@ -62,3 +62,69 @@ describe('gradeFor (rule G3)', () => {
     expect(gradeFor(50, [])).toBeNull()
   })
 })
+
+import { computeClassResults, rankWithTies, type ScoreRow } from './results'
+
+describe('rankWithTies (rule G5)', () => {
+  it('shares positions and skips the next: 1, 2, 2, 4', () => {
+    expect(rankWithTies([90, 80, 80, 70])).toEqual([1, 2, 2, 4])
+  })
+  it('works whatever the order of the input', () => {
+    expect(rankWithTies([70, 80, 90, 80])).toEqual([4, 2, 1, 2])
+  })
+  it('puts everyone first when all are equal', () => {
+    expect(rankWithTies([50, 50, 50])).toEqual([1, 1, 1])
+  })
+  it('treats totals that differ only by rounding noise as equal', () => {
+    expect(rankWithTies([0.1 + 0.2, 0.3])).toEqual([1, 1])
+  })
+})
+
+describe('computeClassResults (rules G4, G5, G7)', () => {
+  const students = [{ id: 's1', full_name: 'Ama' }, { id: 's2', full_name: 'Kofi' }, { id: 's3', full_name: 'Esi' }, { id: 's4', full_name: 'Yaw' }]
+  const subjects = [{ id: 'm', name: 'Maths' }, { id: 'e', name: 'English' }]
+  const sc = (student_id: string, subject_id: string, class_score: number | null, exam_score: number | null, is_absent = false): ScoreRow =>
+    ({ student_id, subject_id, class_score, exam_score, is_absent })
+
+  // totals: Ama 90+90=180 (1st), Kofi 80+70=150, Esi 75+75=150, Yaw 60+50=110
+  const full: ScoreRow[] = [
+    sc('s1', 'm', 30, 60), sc('s1', 'e', 30, 60),
+    sc('s2', 'm', 25, 55), sc('s2', 'e', 20, 50),
+    sc('s3', 'm', 25, 50), sc('s3', 'e', 25, 50),
+    sc('s4', 'm', 20, 40), sc('s4', 'e', 10, 40),
+  ]
+
+  it('gives overall total, average and tied positions 1, 2, 2, 4', () => {
+    const r = computeClassResults(students, subjects, full)
+    expect(r.complete).toBe(true)
+    expect(r.rows.map((x) => x.overall)).toEqual([180, 150, 150, 110])
+    expect(r.rows.map((x) => x.average)).toEqual([90, 75, 75, 55])
+    expect(r.rows.map((x) => x.position)).toEqual([1, 2, 2, 4])
+  })
+
+  it('counts an Absent subject as 0 and still completes the class', () => {
+    const rows = full.map((s) => (s.student_id === 's4' && s.subject_id === 'e' ? sc('s4', 'e', null, null, true) : s))
+    const r = computeClassResults(students, subjects, rows)
+    expect(r.complete).toBe(true)
+    expect(r.rows[3].overall).toBe(60)
+    expect(r.rows[3].subjectTotals.e).toBe(0)
+  })
+
+  it('gives no positions while a score is missing, and lists exactly what is missing', () => {
+    const rows = full.filter((s) => !(s.student_id === 's2' && s.subject_id === 'm')).map((s) => (s.student_id === 's3' && s.subject_id === 'e' ? sc('s3', 'e', 25, null) : s))
+    const r = computeClassResults(students, subjects, rows)
+    expect(r.complete).toBe(false)
+    expect(r.rows.every((x) => x.position === null)).toBe(true)
+    expect(r.missing).toEqual([
+      { studentId: 's2', name: 'Kofi', subject: 'Maths', what: 'both scores' },
+      { studentId: 's3', name: 'Esi', subject: 'English', what: 'exam score' },
+    ])
+    expect(r.rows[1].average).toBeNull() // Kofi has an incomplete subject
+    expect(r.rows[0].average).toBe(90)
+  })
+
+  it('is not complete for an empty class or a class with no subjects', () => {
+    expect(computeClassResults([], subjects, []).complete).toBe(false)
+    expect(computeClassResults(students, [], []).complete).toBe(false)
+  })
+})

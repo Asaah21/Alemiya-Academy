@@ -44,3 +44,72 @@ export function gradeFor(total: number | null, scale: GradeRow[]): { grade: stri
   const band = [...scale].filter((b) => b.min_score <= total).sort((a, b) => b.min_score - a.min_score)[0]
   return band ? { grade: band.grade, remark: band.remark } : null
 }
+
+// ---------------------------------------------------------------------------
+// T13: overall total, average, position (rules G4, G5, G7)
+// ---------------------------------------------------------------------------
+export type ScoreRow = { student_id: string; subject_id: string; class_score: number | null; exam_score: number | null; is_absent: boolean }
+
+export type ResultRow = {
+  studentId: string
+  name: string
+  subjectTotals: Record<string, number | null> // null = not complete yet
+  overall: number // sum of the subject totals that are complete
+  average: number | null // overall / number of subjects, only when every subject is complete
+  position: number | null // only when the whole class is complete
+}
+export type MissingItem = { studentId: string; name: string; subject: string; what: 'class score' | 'exam score' | 'both scores' }
+export type ClassResults = { rows: ResultRow[]; missing: MissingItem[]; complete: boolean }
+
+const round2 = (n: number) => Math.round(n * 100) / 100
+
+// Rule G5: students with the same overall total share a position, and the next position skips (1, 2, 2, 4).
+export function rankWithTies(totals: number[]): number[] {
+  const keys = totals.map(round2)
+  return keys.map((t) => 1 + keys.filter((o) => o > t).length)
+}
+
+export function computeClassResults(
+  students: { id: string; full_name: string }[],
+  subjects: { id: string; name: string }[],
+  scores: ScoreRow[],
+): ClassResults {
+  const by = new Map(scores.map((s) => [`${s.student_id}|${s.subject_id}`, s]))
+  const missing: MissingItem[] = []
+  const rows: ResultRow[] = students.map((st) => {
+    const subjectTotals: Record<string, number | null> = {}
+    let overall = 0
+    let allDone = true
+    for (const sub of subjects) {
+      const s = by.get(`${st.id}|${sub.id}`)
+      const c = s?.class_score ?? null
+      const x = s?.exam_score ?? null
+      const absent = s?.is_absent ?? false
+      if (isComplete(c, x, absent)) {
+        const t = subjectTotal(c, x, absent) ?? 0
+        subjectTotals[sub.id] = t
+        overall += t
+      } else {
+        subjectTotals[sub.id] = null
+        allDone = false
+        missing.push({ studentId: st.id, name: st.full_name, subject: sub.name, what: c === null && x === null ? 'both scores' : c === null ? 'class score' : 'exam score' })
+      }
+    }
+    overall = round2(overall)
+    return {
+      studentId: st.id,
+      name: st.full_name,
+      subjectTotals,
+      overall,
+      average: allDone && subjects.length > 0 ? round2(overall / subjects.length) : null,
+      position: null,
+    }
+  })
+  // Rule G7: positions only when every student has every subject.
+  const complete = missing.length === 0 && students.length > 0 && subjects.length > 0
+  if (complete) {
+    const ranks = rankWithTies(rows.map((r) => r.overall))
+    rows.forEach((r, i) => { r.position = ranks[i] })
+  }
+  return { rows, missing, complete }
+}
