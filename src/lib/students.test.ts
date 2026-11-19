@@ -34,3 +34,30 @@ describe('filterStudents', () => {
     expect(filterStudents(list, { search: 'ama', classId: 'c2', status: '' })).toHaveLength(0)
   })
 })
+
+import { classRoll, validateMovement } from './students'
+
+describe('validateMovement', () => {
+  const ok = { movement: 'withdrawn', moved_on: '2026-11-01', reason: 'Family moved' }
+  it('accepts a complete form', () => expect(validateMovement(ok, '2026-11-19').ok).toBe(true))
+  it('needs a reason unless graduating', () => {
+    expect(validateMovement({ ...ok, reason: ' ' }, '2026-11-19').ok).toBe(false)
+    expect(validateMovement({ ...ok, movement: 'graduated', reason: '' }, '2026-11-19').ok).toBe(true)
+  })
+  it('rejects a missing choice, a missing date and a future date', () => {
+    expect(validateMovement({ ...ok, movement: '' }, '2026-11-19').ok).toBe(false)
+    expect(validateMovement({ ...ok, moved_on: '' }, '2026-11-19').ok).toBe(false)
+    expect(validateMovement({ ...ok, moved_on: '2026-12-01' }, '2026-11-19').ok).toBe(false)
+  })
+})
+
+describe('classRoll', () => {
+  it('counts only active students per class', () => {
+    const roll = classRoll([
+      { class_id: 'a', status: 'active' }, { class_id: 'a', status: 'active' },
+      { class_id: 'a', status: 'withdrawn' }, { class_id: 'b', status: 'graduated' }, { class_id: null, status: 'active' },
+    ])
+    expect(roll.get('a')).toBe(2)
+    expect(roll.has('b')).toBe(false)
+  })
+})

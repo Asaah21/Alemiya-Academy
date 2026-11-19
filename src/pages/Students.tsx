@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
-import { filterStudents, STATUS_LABELS } from '../lib/students'
+import { classRoll, filterStudents, STATUS_LABELS } from '../lib/students'
 import { supabase } from '../lib/supabase'
 
 type Row = { id: string; admission_no: string; full_name: string; guardian_name: string | null; guardian_phone: string | null; class_id: string | null; status: string }
@@ -29,6 +29,7 @@ export default function Students() {
   }, [])
 
   const className = useMemo(() => new Map(classes.map((c) => [c.id, c.name])), [classes])
+  const roll = classRoll(rows)
   const shown = filterStudents(rows, { search, classId, status })
   const input = 'rounded-lg border border-slate-300 p-3 text-base'
 
@@ -45,7 +46,7 @@ export default function Students() {
       <div className="grid grid-cols-2 gap-2">
         <select value={classId} onChange={(e) => setClassId(e.target.value)} className={input} aria-label="Class">
           <option value="">All classes</option>
-          {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          {classes.map((c) => <option key={c.id} value={c.id}>{c.name} ({roll.get(c.id) ?? 0})</option>)}
         </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className={input} aria-label="Status">
           <option value="active">Active</option>

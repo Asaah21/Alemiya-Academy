@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
+import Movements from '../features/students/Movements'
 import { STATUS_LABELS, validateStudent, type StudentInput } from '../lib/students'
 import { supabase } from '../lib/supabase'
 
@@ -20,6 +21,8 @@ export default function StudentForm() {
   const [meta, setMeta] = useState<{ admission_no: string; status: string } | null>(null)
   const [classes, setClasses] = useState<{ id: string; name: string }[]>([])
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [joinedAs, setJoinedAs] = useState<'new' | 'transfer_in'>('new')
+  const [version, setVersion] = useState(0)
 
   useEffect(() => {
     supabase!.from('classes').select('id, name').order('level_order').then(({ data }) => setClasses(data ?? []))
@@ -33,7 +36,7 @@ export default function StudentForm() {
         setMeta({ admission_no: data.admission_no, status: data.status })
       })
     }
-  }, [id, isNew])
+  }, [id, isNew, version])
 
   const set = (k: keyof StudentInput) => (e: { target: { value: string } }) => setForm({ ...form, [k]: e.target.value })
 
@@ -46,8 +49,9 @@ export default function StudentForm() {
       date_of_birth: form.date_of_birth || null, guardian_name: form.guardian_name.trim() || null,
       guardian_phone: form.guardian_phone.trim() || null, admitted_on: form.admitted_on || null,
     }
+    const insertBody = { ...body, joined_as: joinedAs }
     if (isNew) {
-      const { data, error } = await supabase!.from('students').insert(body).select('id, admission_no').single()
+      const { data, error } = await supabase!.from('students').insert(insertBody).select('id, admission_no').single()
       if (error || !data) return setMsg({ ok: false, text: 'Could not save. Please try again.' })
       navigate(`/students/${data.id}`, { replace: true, state: { added: data.admission_no } })
     } else {
@@ -86,10 +90,21 @@ export default function StudentForm() {
         <label className={label}>Date of birth<input type="date" disabled={readOnly} value={form.date_of_birth} onChange={set('date_of_birth')} className={input} /></label>
         <label className={label}>Guardian name<input disabled={readOnly} value={form.guardian_name} onChange={set('guardian_name')} className={input} /></label>
         <label className={label}>Guardian phone<input inputMode="tel" disabled={readOnly} value={form.guardian_phone} onChange={set('guardian_phone')} className={input} /></label>
+        {isNew && (
+          <label className={label}>How did the student join?
+            <select value={joinedAs} onChange={(e) => setJoinedAs(e.target.value as 'new' | 'transfer_in')} className={input}>
+              <option value="new">New admission</option>
+              <option value="transfer_in">Transferred in from another school</option>
+            </select>
+          </label>
+        )}
         <label className={label}>Date admitted<input type="date" disabled={readOnly} value={form.admitted_on} onChange={set('admitted_on')} className={input} /></label>
         {msg && <p className={`rounded-lg p-3 text-sm ${msg.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
         {!readOnly && <button className="rounded-lg bg-brand p-3 font-semibold text-white">{isNew ? 'Save student' : 'Save changes'}</button>}
       </form>
+      {!isNew && meta && id && (
+        <Movements studentId={id} status={meta.status} isAdmin={isAdmin} onChanged={() => setVersion((v) => v + 1)} />
+      )}
     </div>
   )
 }
