@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import RequireAuth from './components/RequireAuth'
 import Account from './pages/Account'
+import AttendanceSummary from './pages/AttendanceSummary'
 import Classes from './pages/Classes'
 import Grades from './pages/Grades'
 import ImportStudents from './pages/ImportStudents'
@@ -31,6 +32,7 @@ export default function App() {
       <Route path="/students/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/students/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/attendance" element={<RequireAuth><WeeklyAttendance /></RequireAuth>} />
+      <Route path="/attendance/summary" element={<RequireAuth><AttendanceSummary /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useSchool } from '../features/school/SchoolProvider'
+import { weeksDue, weeksNotRecorded } from '../lib/attendance'
+import { formatDate } from '../lib/terms'
 import { addDays, checkWeek, mondayOf, weekLabel } from '../lib/weeks'
 import { supabase } from '../lib/supabase'
 
@@ -20,6 +23,7 @@ export default function WeeklyAttendance() {
   const [loading, setLoading] = useState(false)
   const [bad, setBad] = useState<string[]>([])
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [missing, setMissing] = useState<string[]>([])
 
   useEffect(() => {
     supabase!.from('classes').select('id, name').order('level_order').then(({ data }) => setClasses(data ?? []))
@@ -50,6 +54,14 @@ export default function WeeklyAttendance() {
 
   useEffect(() => { load() }, [load])
 
+  // Weeks of the current term that should be recorded by now but have no saved entry (rules A6, A9).
+  const loadMissing = useCallback(async () => {
+    if (!classId || !currentTerm) return setMissing([])
+    const { data } = await supabase!.from('attendance_weeks').select('week_start').eq('class_id', classId).eq('term_id', currentTerm.id)
+    setMissing(weeksNotRecorded(weeksDue(currentTerm, today()), (data ?? []).map((w) => w.week_start)))
+  }, [classId, currentTerm])
+  useEffect(() => { loadMissing() }, [loadMissing, recorded])
+
   const totalAbsent = useMemo(() => Object.values(absent).filter((d) => d > 0).length, [absent])
 
   async function save() {
@@ -75,6 +87,8 @@ export default function WeeklyAttendance() {
         Fill this in on Friday. Choose the class, then pick how many days each student was absent. Students you leave at 0 count as present every day.
       </p>
 
+      <Link to="/attendance/summary" className="text-sm underline">See attendance rates</Link>
+
       <select value={classId} onChange={(e) => setClassId(e.target.value)} className={input} aria-label="Class">
         <option value="">Choose the class</option>
         {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -88,6 +102,17 @@ export default function WeeklyAttendance() {
         </div>
         <button onClick={() => setWeek(addDays(week, 7))} className={btn} aria-label="Next week">▶</button>
       </div>
+
+      {classId && missing.length > 0 && (
+        <div className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">
+          <p className="font-medium">{missing.length} week{missing.length === 1 ? '' : 's'} not recorded this term. Tap one to fill it in:</p>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {missing.map((w) => (
+              <li key={w}><button onClick={() => setWeek(w)} className="rounded-full bg-white px-3 py-1 font-medium">Week of {formatDate(w)}</button></li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {!currentTerm && <p className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">No current term is set. Ask the Admin to set it up.</p>}
 
