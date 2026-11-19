@@ -17,14 +17,14 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
-      <header className="flex items-center justify-between bg-white p-3 shadow-sm md:hidden">
+      <header className="flex items-center justify-between bg-white p-3 shadow-sm md:hidden print:hidden">
         <Link to="/" className="text-lg font-bold text-brand">Alemiya Academy</Link>
         <button onClick={() => setOpen(!open)} aria-expanded={open} className="rounded-lg border border-slate-300 px-4 py-2 font-medium">
           {open ? 'Close' : 'Menu'}
         </button>
       </header>
 
-      <nav className={`${open ? 'block' : 'hidden'} bg-white p-3 shadow-sm md:block md:min-h-screen md:w-64 md:shrink-0`}>
+      <nav className={`${open ? 'block' : 'hidden'} bg-white p-3 shadow-sm md:block md:min-h-screen md:w-64 md:shrink-0 print:hidden`}>
         <Link to="/" className="mb-4 hidden px-4 text-lg font-bold text-brand md:block">Alemiya Academy</Link>
         <ul className="flex flex-col gap-1">
           {items.map((m) => (

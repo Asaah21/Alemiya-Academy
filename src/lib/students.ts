@@ -45,3 +45,32 @@ export const STATUS_LABELS: Record<string, string> = {
   withdrawn: 'Withdrawn',
   graduated: 'Graduated',
 }
+
+export const MOVEMENT_LABELS: Record<string, string> = {
+  new: 'New admission',
+  transfer_in: 'Transferred in',
+  transfer_out: 'Transferred out',
+  withdrawn: 'Withdrawn',
+  graduated: 'Graduated',
+  promoted: 'Promoted',
+  repeated: 'Repeated the class',
+}
+
+// Checks the "move out / bring back" form before it is sent. The database checks again.
+export function validateMovement(
+  m: { movement: string; moved_on: string; reason: string },
+  today = new Date().toISOString().slice(0, 10),
+): Check {
+  if (!m.movement) return fail('Choose what happened.')
+  if (!m.moved_on) return fail('Choose the date.')
+  if (m.moved_on > today) return fail('The date cannot be in the future.')
+  if (m.movement !== 'graduated' && m.reason.trim() === '') return fail('Give a reason.')
+  return { ok: true }
+}
+
+// How many active students are in each class (the class roll).
+export function classRoll(students: { class_id: string | null; status: string }[]): Map<string, number> {
+  const roll = new Map<string, number>()
+  for (const s of students) if (s.status === 'active' && s.class_id) roll.set(s.class_id, (roll.get(s.class_id) ?? 0) + 1)
+  return roll
+}
