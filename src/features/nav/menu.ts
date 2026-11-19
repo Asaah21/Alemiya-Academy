@@ -14,6 +14,7 @@ export const MENU: MenuItem[] = [
   { label: 'Weekly Attendance', path: '/attendance', roles: ['admin', 'staff'], step: 'T11' },
   { label: 'Staff Attendance', path: '/staff-attendance', roles: ['admin'], step: 'T34' },
   { label: 'Enter Scores', path: '/scores', roles: ['admin', 'staff'], step: 'T15' },
+  { label: 'Remarks', path: '/remarks', roles: ['admin', 'staff'], step: 'T14' },
   { label: 'Report Cards', path: '/report-cards', roles: ['admin', 'staff'], step: 'T20' },
   { label: 'Fees', path: '/fees', roles: ['admin', 'staff'], step: 'T24' },
   { label: 'Reports', path: '/reports', roles: ['admin'], step: 'T30' },

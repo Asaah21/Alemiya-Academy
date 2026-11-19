@@ -3,14 +3,20 @@ import RequireAuth from './components/RequireAuth'
 import Account from './pages/Account'
 import AttendanceSummary from './pages/AttendanceSummary'
 import Classes from './pages/Classes'
+import EnterScores from './pages/EnterScores'
+import FeeItems from './pages/FeeItems'
 import Grades from './pages/Grades'
 import ImportStudents from './pages/ImportStudents'
 import StudentForm from './pages/StudentForm'
 import Students from './pages/Students'
 import Subjects from './pages/Subjects'
 import WeeklyAttendance from './pages/WeeklyAttendance'
+import ClassResults from './pages/ClassResults'
 import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
+import Payments from './pages/Payments'
+import Remarks from './pages/Remarks'
+import ReportCards from './pages/ReportCards'
 import Setup from './pages/Setup'
 import Staff from './pages/Staff'
 import StaffAttendance from './pages/StaffAttendance'
@@ -27,9 +33,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
-      {['/scores', '/report-cards', '/fees'].map((p) => (
-        <Route key={p} path={p} element={<RequireAuth><ComingSoon /></RequireAuth>} />
-      ))}
+      <Route path="/fees" element={<RequireAuth><Payments /></RequireAuth>} />
       <Route path="/students" element={<RequireAuth><Students /></RequireAuth>} />
       <Route path="/students/import" element={<RequireAuth role="admin"><ImportStudents /></RequireAuth>} />
       <Route path="/students/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
@@ -38,6 +42,10 @@ export default function App() {
       <Route path="/attendance/summary" element={<RequireAuth><AttendanceSummary /></RequireAuth>} />
       <Route path="/staff-attendance" element={<RequireAuth role="admin"><StaffAttendance /></RequireAuth>} />
       <Route path="/staff-attendance/summary" element={<RequireAuth role="admin"><StaffSummary /></RequireAuth>} />
+      <Route path="/report-cards" element={<RequireAuth><ReportCards /></RequireAuth>} />
+      <Route path="/remarks" element={<RequireAuth><Remarks /></RequireAuth>} />
+      <Route path="/scores/results" element={<RequireAuth><ClassResults /></RequireAuth>} />
+      <Route path="/scores" element={<RequireAuth><EnterScores /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />
@@ -45,6 +53,7 @@ export default function App() {
       <Route path="/setup/classes" element={<RequireAuth role="admin"><Classes /></RequireAuth>} />
       <Route path="/setup/subjects" element={<RequireAuth role="admin"><Subjects /></RequireAuth>} />
       <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
+      <Route path="/setup/fees" element={<RequireAuth role="admin"><FeeItems /></RequireAuth>} />
       <Route path="/setup/staff" element={<RequireAuth role="admin"><Staff /></RequireAuth>} />
       <Route path="/setup/users" element={<RequireAuth role="admin"><Users /></RequireAuth>} />
     </Routes>

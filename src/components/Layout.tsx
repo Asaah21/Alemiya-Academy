@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </nav>
 
-      <main className="w-full max-w-3xl flex-1 p-4 md:p-6">
+      <main className="w-full max-w-3xl flex-1 p-4 md:p-6 print:max-w-none print:p-0">
         <TermBadge />
         {children}
       </main>
