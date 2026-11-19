@@ -4,6 +4,7 @@ import Account from './pages/Account'
 import AttendanceSummary from './pages/AttendanceSummary'
 import Classes from './pages/Classes'
 import EnterScores from './pages/EnterScores'
+import FeeItems from './pages/FeeItems'
 import Grades from './pages/Grades'
 import ImportStudents from './pages/ImportStudents'
 import StudentForm from './pages/StudentForm'
@@ -53,6 +54,7 @@ export default function App() {
       <Route path="/setup/classes" element={<RequireAuth role="admin"><Classes /></RequireAuth>} />
       <Route path="/setup/subjects" element={<RequireAuth role="admin"><Subjects /></RequireAuth>} />
       <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
+      <Route path="/setup/fees" element={<RequireAuth role="admin"><FeeItems /></RequireAuth>} />
       <Route path="/setup/staff" element={<RequireAuth role="admin"><Staff /></RequireAuth>} />
       <Route path="/setup/users" element={<RequireAuth role="admin"><Users /></RequireAuth>} />
     </Routes>
