@@ -10,7 +10,7 @@ export default function TermBadge() {
   if (!loaded) return null
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm shadow-sm">
+    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm shadow-sm print:hidden">
       {schoolName && <span className="font-semibold">{schoolName}</span>}
       {currentTerm ? (
         <span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">

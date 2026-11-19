@@ -14,6 +14,7 @@ import SchoolDetails from './pages/SchoolDetails'
 import Setup from './pages/Setup'
 import Staff from './pages/Staff'
 import StaffAttendance from './pages/StaffAttendance'
+import StaffSummary from './pages/StaffSummary'
 import Years from './pages/Years'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -36,6 +37,7 @@ export default function App() {
       <Route path="/attendance" element={<RequireAuth><WeeklyAttendance /></RequireAuth>} />
       <Route path="/attendance/summary" element={<RequireAuth><AttendanceSummary /></RequireAuth>} />
       <Route path="/staff-attendance" element={<RequireAuth role="admin"><StaffAttendance /></RequireAuth>} />
+      <Route path="/staff-attendance/summary" element={<RequireAuth role="admin"><StaffSummary /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />

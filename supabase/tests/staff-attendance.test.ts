@@ -78,3 +78,18 @@ describe('non-school days', () => {
     expect(n).toBe(0)
   })
 })
+
+describe('staff_attendance_totals (T35)', () => {
+  it('counts each status per person, only for saved days, Admin only', async () => {
+    await save(id.admin, day(-10), [{ staff_id: id.a, status: 'late' }, { staff_id: id.b, status: 'on_leave' }])
+    await save(id.admin, day(-11), [{ staff_id: id.a, status: 'present' }, { staff_id: id.b, status: 'absent' }])
+    const term = (await db.query<{ id: string }>(`select id from terms limit 1`)).rows[0].id
+    const rows = await asUser(db, id.admin, () => db.query<{ staff_id: string; present: string; late: string; absent: string; on_leave: string }>(`select * from staff_attendance_totals($1)`, [term]))
+    const a = rows.rows.find((r) => r.staff_id === id.a)!
+    const b = rows.rows.find((r) => r.staff_id === id.b)!
+    expect([a.present, a.late, a.absent, a.on_leave].map(Number)).toEqual([2, 1, 0, 0]) // day(-2) present, day(-11) present, day(-10) late
+    expect([b.present, b.late, b.absent, b.on_leave].map(Number)).toEqual([0, 0, 2, 1]) // day(-2) absent, day(-11) absent, day(-10) leave
+    const none = await asUser(db, id.staff, () => db.query(`select * from staff_attendance_totals($1)`, [term]))
+    expect(none.rows).toHaveLength(0)
+  })
+})

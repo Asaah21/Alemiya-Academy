@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
 import { daysNotRecorded, isWeekend, schoolDaysUpTo, STAFF_STATUSES, type StaffStatus } from '../lib/staff-attendance'
@@ -90,7 +91,10 @@ export default function StaffAttendance() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Staff Attendance</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Staff Attendance</h1>
+        <Link to="/staff-attendance/summary" className="text-sm underline">Term summary</Link>
+      </div>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
         Everyone starts as Present. Tap only the people who were absent, late or on leave, then Save the day.
       </p>
