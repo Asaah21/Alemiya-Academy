@@ -12,6 +12,7 @@ import WeeklyAttendance from './pages/WeeklyAttendance'
 import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Setup from './pages/Setup'
+import Staff from './pages/Staff'
 import Years from './pages/Years'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -40,6 +41,7 @@ export default function App() {
       <Route path="/setup/classes" element={<RequireAuth role="admin"><Classes /></RequireAuth>} />
       <Route path="/setup/subjects" element={<RequireAuth role="admin"><Subjects /></RequireAuth>} />
       <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
+      <Route path="/setup/staff" element={<RequireAuth role="admin"><Staff /></RequireAuth>} />
       <Route path="/setup/users" element={<RequireAuth role="admin"><Users /></RequireAuth>} />
     </Routes>
   )

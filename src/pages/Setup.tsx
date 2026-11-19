@@ -20,6 +20,9 @@ export default function Setup() {
       <Link to="/setup/grades" className="rounded-xl bg-white p-4 font-medium shadow-sm">
         Grading scale
       </Link>
+      <Link to="/setup/staff" className="rounded-xl bg-white p-4 font-medium shadow-sm">
+        Staff list
+      </Link>
       <Link to="/setup/users" className="rounded-xl bg-white p-4 font-medium shadow-sm">
         Users: add staff, reset passwords
       </Link>
