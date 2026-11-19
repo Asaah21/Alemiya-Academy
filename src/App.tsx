@@ -7,6 +7,7 @@ import ImportStudents from './pages/ImportStudents'
 import StudentForm from './pages/StudentForm'
 import Students from './pages/Students'
 import Subjects from './pages/Subjects'
+import WeeklyAttendance from './pages/WeeklyAttendance'
 import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Setup from './pages/Setup'
@@ -22,13 +23,14 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
-      {['/attendance', '/scores', '/report-cards', '/fees'].map((p) => (
+      {['/scores', '/report-cards', '/fees'].map((p) => (
         <Route key={p} path={p} element={<RequireAuth><ComingSoon /></RequireAuth>} />
       ))}
       <Route path="/students" element={<RequireAuth><Students /></RequireAuth>} />
       <Route path="/students/import" element={<RequireAuth role="admin"><ImportStudents /></RequireAuth>} />
       <Route path="/students/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/students/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
+      <Route path="/attendance" element={<RequireAuth><WeeklyAttendance /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />
