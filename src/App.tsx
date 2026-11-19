@@ -3,6 +3,7 @@ import RequireAuth from './components/RequireAuth'
 import Account from './pages/Account'
 import Classes from './pages/Classes'
 import Grades from './pages/Grades'
+import ImportStudents from './pages/ImportStudents'
 import StudentForm from './pages/StudentForm'
 import Students from './pages/Students'
 import Subjects from './pages/Subjects'
@@ -25,6 +26,7 @@ export default function App() {
         <Route key={p} path={p} element={<RequireAuth><ComingSoon /></RequireAuth>} />
       ))}
       <Route path="/students" element={<RequireAuth><Students /></RequireAuth>} />
+      <Route path="/students/import" element={<RequireAuth role="admin"><ImportStudents /></RequireAuth>} />
       <Route path="/students/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/students/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />

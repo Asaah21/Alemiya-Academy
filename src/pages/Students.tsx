@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../features/auth/AuthProvider'
 import { filterStudents, STATUS_LABELS } from '../lib/students'
 import { supabase } from '../lib/supabase'
 
@@ -7,6 +8,8 @@ type Row = { id: string; admission_no: string; full_name: string; guardian_name:
 type Cls = { id: string; name: string }
 
 export default function Students() {
+  const { state } = useAuth()
+  const isAdmin = state.status === 'ready' && state.profile.role === 'admin'
   const [rows, setRows] = useState<Row[]>([])
   const [classes, setClasses] = useState<Cls[]>([])
   const [loaded, setLoaded] = useState(false)
@@ -33,7 +36,10 @@ export default function Students() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Students</h1>
-        <Link to="/students/new" className="rounded-lg bg-brand px-4 py-3 font-semibold text-white">Add student</Link>
+        <div className="flex gap-2">
+          {isAdmin && <Link to="/students/import" className="rounded-lg border border-slate-300 px-4 py-3 font-medium">Import</Link>}
+          <Link to="/students/new" className="rounded-lg bg-brand px-4 py-3 font-semibold text-white">Add student</Link>
+        </div>
       </div>
       <input type="search" placeholder="Search name, number or guardian" value={search} onChange={(e) => setSearch(e.target.value)} className={input} />
       <div className="grid grid-cols-2 gap-2">
