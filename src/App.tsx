@@ -13,6 +13,7 @@ import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Setup from './pages/Setup'
 import Staff from './pages/Staff'
+import StaffAttendance from './pages/StaffAttendance'
 import Years from './pages/Years'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -34,6 +35,7 @@ export default function App() {
       <Route path="/students/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
       <Route path="/attendance" element={<RequireAuth><WeeklyAttendance /></RequireAuth>} />
       <Route path="/attendance/summary" element={<RequireAuth><AttendanceSummary /></RequireAuth>} />
+      <Route path="/staff-attendance" element={<RequireAuth role="admin"><StaffAttendance /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><ComingSoon /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />
