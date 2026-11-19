@@ -14,6 +14,7 @@ import WeeklyAttendance from './pages/WeeklyAttendance'
 import ClassResults from './pages/ClassResults'
 import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
+import Payments from './pages/Payments'
 import Remarks from './pages/Remarks'
 import ReportCards from './pages/ReportCards'
 import Setup from './pages/Setup'
@@ -32,9 +33,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
-      {['/fees'].map((p) => (
-        <Route key={p} path={p} element={<RequireAuth><ComingSoon /></RequireAuth>} />
-      ))}
+      <Route path="/fees" element={<RequireAuth><Payments /></RequireAuth>} />
       <Route path="/students" element={<RequireAuth><Students /></RequireAuth>} />
       <Route path="/students/import" element={<RequireAuth role="admin"><ImportStudents /></RequireAuth>} />
       <Route path="/students/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
