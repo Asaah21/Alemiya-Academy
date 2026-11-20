@@ -16,6 +16,7 @@ import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Balances from './pages/Balances'
 import DailyCash from './pages/DailyCash'
+import ParentSlips from './pages/ParentSlips'
 import Payments from './pages/Payments'
 import Remarks from './pages/Remarks'
 import ReportCards from './pages/ReportCards'
@@ -58,6 +59,7 @@ export default function App() {
       <Route path="/setup/subjects" element={<RequireAuth role="admin"><Subjects /></RequireAuth>} />
       <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
       <Route path="/setup/fees" element={<RequireAuth role="admin"><FeeItems /></RequireAuth>} />
+      <Route path="/setup/parents" element={<RequireAuth role="admin"><ParentSlips /></RequireAuth>} />
       <Route path="/setup/staff" element={<RequireAuth role="admin"><Staff /></RequireAuth>} />
       <Route path="/setup/users" element={<RequireAuth role="admin"><Users /></RequireAuth>} />
     </Routes>
