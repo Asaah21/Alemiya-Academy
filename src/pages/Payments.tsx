@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
 import Receipt, { type ReceiptData } from '../features/fees/Receipt'
 import { useSchool } from '../features/school/SchoolProvider'
@@ -107,7 +108,13 @@ export default function Payments() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 print:hidden">
-        <h1 className="text-2xl font-bold">Fees</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Fees</h1>
+          <span className="flex gap-3 text-sm underline">
+            <Link to="/fees/balances">Balances</Link>
+            {state.status === 'ready' && state.profile.role === 'admin' && <Link to="/fees/cash">Daily cash</Link>}
+          </span>
+        </div>
         {!student ? (
           <>
             <input placeholder="Search by name or admission number" value={search} onChange={(e) => setSearch(e.target.value)} className={input} aria-label="Search students" />
