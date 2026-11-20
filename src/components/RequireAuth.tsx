@@ -12,6 +12,7 @@ export default function RequireAuth({ children, role }: { children: ReactNode; r
     return <p className="p-6 text-slate-600">Loading…</p>
   }
   if (state.status === 'signed-out') return <Navigate to="/login" replace />
+  if (state.status === 'parent') return <Navigate to="/parent/home" replace />
   if (state.status === 'no-profile') return <Navigate to="/login" replace state={{ noProfile: true }} />
 
   if (role && state.profile.role !== role) {
