@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
   const [busy, setBusy] = useState(false)
 
   if (state.status === 'ready') return <Navigate to="/" replace />
+  if (state.status === 'parent') return <Navigate to="/parent/home" replace />
 
   const noProfile = state.status === 'no-profile' || Boolean((location.state as { noProfile?: boolean } | null)?.noProfile)
 
@@ -71,6 +72,7 @@ export default function Login() {
           {busy ? 'Logging in…' : 'Log in'}
         </button>
       </form>
+      <p className="text-xs text-slate-500">Are you a parent? <Link to="/parent" className="underline">Parent login</Link></p>
       <p className="text-xs text-slate-500">Forgot your password? Ask the Admin to give you a new one.</p>
     </main>
   )

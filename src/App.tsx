@@ -16,6 +16,8 @@ import ComingSoon from './pages/ComingSoon'
 import SchoolDetails from './pages/SchoolDetails'
 import Balances from './pages/Balances'
 import DailyCash from './pages/DailyCash'
+import ParentHome from './pages/ParentHome'
+import ParentLogin from './pages/ParentLogin'
 import ParentSlips from './pages/ParentSlips'
 import Payments from './pages/Payments'
 import Remarks from './pages/Remarks'
@@ -34,6 +36,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/parent" element={<ParentLogin />} />
+      <Route path="/parent/home" element={<ParentHome />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
       <Route path="/fees" element={<RequireAuth><Payments /></RequireAuth>} />
