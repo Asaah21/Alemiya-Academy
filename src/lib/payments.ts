@@ -1,7 +1,7 @@
 // Cash payments and balances (rules F3 to F6).
 import { parseAmount } from './fees'
 
-export type Payment = { id: string; student_id: string; term_id: string; amount: number; paid_on: string; receipt_no: string; note: string | null; status: 'valid' | 'void'; received_by: string | null }
+export type Payment = { id: string; student_id: string; term_id: string; amount: number; paid_on: string; receipt_no: string; note: string | null; status: 'valid' | 'void'; received_by: string | null; void_reason?: string | null }
 
 export type PaymentCheck = { ok: true; amount: number } | { ok: false; error: string }
 

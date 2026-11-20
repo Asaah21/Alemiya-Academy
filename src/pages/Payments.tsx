@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
 import Receipt, { type ReceiptData } from '../features/fees/Receipt'
 import { useSchool } from '../features/school/SchoolProvider'
@@ -16,6 +17,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 export default function Payments() {
   const { state } = useAuth()
   const me = state.status === 'ready' ? state.profile.full_name : ''
+  const isAdmin = state.status === 'ready' && state.profile.role === 'admin'
   const { schoolName, currentTerm } = useSchool()
   const [students, setStudents] = useState<Student[]>([])
   const [classes, setClasses] = useState<{ id: string; name: string }[]>([])
@@ -57,7 +59,7 @@ export default function Payments() {
     if (!student || !termId) return
     const [fees, pays] = await Promise.all([
       student.class_id ? supabase!.from('fee_items').select('amount').eq('class_id', student.class_id).eq('term_id', termId) : Promise.resolve({ data: [], error: null }),
-      supabase!.from('payments').select('id, student_id, term_id, amount, paid_on, receipt_no, note, status, received_by').eq('student_id', student.id).eq('term_id', termId).order('created_at', { ascending: false }),
+      supabase!.from('payments').select('id, student_id, term_id, amount, paid_on, receipt_no, note, status, received_by, void_reason').eq('student_id', student.id).eq('term_id', termId).order('created_at', { ascending: false }),
     ])
     if (fees.error || pays.error) return setMsg({ ok: false, text: 'Could not load the fees. Please try again.' })
     setOwed(totalFees((fees.data ?? []).map((f) => ({ amount: Number(f.amount) }))))
@@ -93,6 +95,16 @@ export default function Payments() {
     load()
   }
 
+  async function voidPayment(p: Payment) {
+    const reason = window.prompt(`Void receipt ${p.receipt_no} (${formatMoney(p.amount)})? Give the reason. This cannot be undone.`)?.trim()
+    if (reason === undefined || reason === '') return
+    if (reason.length < 3) return setMsg({ ok: false, text: 'Please give a reason of at least 3 letters.' })
+    const { error } = await supabase!.rpc('void_payment', { p_payment: p.id, p_reason: reason })
+    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: `Receipt ${p.receipt_no} voided. Record the correct payment if needed.` })
+    setReceipt(null)
+    load()
+  }
+
   async function reprint(p: Payment) {
     let by = ''
     if (p.received_by && state.status === 'ready' && p.received_by === state.session.user.id) by = me
@@ -107,7 +119,13 @@ export default function Payments() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 print:hidden">
-        <h1 className="text-2xl font-bold">Fees</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Fees</h1>
+          <span className="flex gap-3 text-sm underline">
+            <Link to="/fees/balances">Balances</Link>
+            {isAdmin && <Link to="/fees/cash">Daily cash</Link>}
+          </span>
+        </div>
         {!student ? (
           <>
             <input placeholder="Search by name or admission number" value={search} onChange={(e) => setSearch(e.target.value)} className={input} aria-label="Search students" />
@@ -155,8 +173,14 @@ export default function Payments() {
                 {payments.length === 0 && <li className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No payments yet.</li>}
                 {payments.map((p) => (
                   <li key={p.id} className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+                    <div>
                     <p className={p.status === 'void' ? 'text-slate-400 line-through' : ''}><span className="block font-medium">{formatMoney(p.amount)}</span><span className="text-sm">{p.receipt_no} · {receiptDate(p.paid_on)}</span></p>
-                    <button onClick={() => reprint(p)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm">Receipt</button>
+                    {p.status === 'void' && p.void_reason && <p className="text-xs text-red-700">Voided: {p.void_reason}</p>}
+                    </div>
+                    <span className="flex gap-2">
+                      <button onClick={() => reprint(p)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm">Receipt</button>
+                      {isAdmin && p.status === 'valid' && <button onClick={() => voidPayment(p)} className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700">Void</button>}
+                    </span>
                   </li>
                 ))}
               </ul>
