@@ -28,6 +28,7 @@ import StaffAttendance from './pages/StaffAttendance'
 import SummaryReports from './pages/SummaryReports'
 import TermClose from './pages/TermClose'
 import Promotion from './pages/Promotion'
+import Backup from './pages/Backup'
 import Turnover from './pages/Turnover'
 import StaffSummary from './pages/StaffSummary'
 import Years from './pages/Years'
@@ -70,6 +71,7 @@ export default function App() {
       <Route path="/setup/grades" element={<RequireAuth role="admin"><Grades /></RequireAuth>} />
       <Route path="/setup/close" element={<RequireAuth role="admin"><TermClose /></RequireAuth>} />
       <Route path="/setup/promotion" element={<RequireAuth role="admin"><Promotion /></RequireAuth>} />
+      <Route path="/setup/backup" element={<RequireAuth role="admin"><Backup /></RequireAuth>} />
       <Route path="/setup/fees" element={<RequireAuth role="admin"><FeeItems /></RequireAuth>} />
       <Route path="/setup/parents" element={<RequireAuth role="admin"><ParentSlips /></RequireAuth>} />
       <Route path="/setup/staff" element={<RequireAuth role="admin"><Staff /></RequireAuth>} />
