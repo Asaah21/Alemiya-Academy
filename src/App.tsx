@@ -25,6 +25,7 @@ import ReportCards from './pages/ReportCards'
 import Setup from './pages/Setup'
 import Staff from './pages/Staff'
 import StaffAttendance from './pages/StaffAttendance'
+import SummaryReports from './pages/SummaryReports'
 import Turnover from './pages/Turnover'
 import StaffSummary from './pages/StaffSummary'
 import Years from './pages/Years'
@@ -57,6 +58,7 @@ export default function App() {
       <Route path="/scores/results" element={<RequireAuth><ClassResults /></RequireAuth>} />
       <Route path="/scores" element={<RequireAuth><EnterScores /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth role="admin"><Reports /></RequireAuth>} />
+      <Route path="/reports/summary" element={<RequireAuth role="admin"><SummaryReports /></RequireAuth>} />
       <Route path="/reports/turnover" element={<RequireAuth role="admin"><Turnover /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth role="admin"><Setup /></RequireAuth>} />
       <Route path="/setup/school" element={<RequireAuth role="admin"><SchoolDetails /></RequireAuth>} />
