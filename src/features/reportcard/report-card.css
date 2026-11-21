@@ -33,6 +33,6 @@
 
 @page { size: A4; margin: 0; }
 @media print {
-  .rc-sheet { display: block !important; transform: none !important; }
+  .rc-sheet, [data-rc-scale] { display: block !important; transform: none !important; width: auto !important; height: auto !important; }
   body { background: #fff !important; }
 }

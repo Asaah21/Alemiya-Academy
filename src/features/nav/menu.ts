@@ -17,7 +17,7 @@ export const MENU: MenuItem[] = [
   { label: 'Remarks', path: '/remarks', roles: ['admin', 'staff'], step: 'T14' },
   { label: 'Report Cards', path: '/report-cards', roles: ['admin', 'staff'], step: 'T20' },
   { label: 'Fees', path: '/fees', roles: ['admin', 'staff'], step: 'T24' },
-  { label: 'Reports', path: '/reports', roles: ['admin'], step: 'T30' },
+  { label: 'Reports', path: '/reports', roles: ['admin'], step: 'T24' },
   { label: 'Setup', path: '/setup', roles: ['admin'], step: 'T06' },
 ]
 
