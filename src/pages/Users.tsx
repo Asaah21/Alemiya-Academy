@@ -61,12 +61,12 @@ export default function Users() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-extrabold text-brand">Users</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Users</h1>
       {notice && (
         <p className={`rounded-xl p-4 text-sm ${notice.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{notice.text}</p>
       )}
 
-      <form onSubmit={create} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+      <form onSubmit={create} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="font-semibold">Add a user</h2>
         <input required placeholder="Full name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={input} />
         <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={input} />
@@ -86,7 +86,7 @@ export default function Users() {
 
       <ul className="flex flex-col gap-2">
         {users.map((u) => (
-          <li key={u.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+          <li key={u.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
             <div>
               <p className="font-medium">
                 {u.full_name} <span className="ml-1 rounded-full bg-slate-200 px-2 py-0.5 text-xs capitalize">{u.role}</span>

@@ -94,10 +94,10 @@ export default function Years() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-extrabold text-brand">Academic years and terms</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Academic years and terms</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
 
-      <form onSubmit={addYear} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+      <form onSubmit={addYear} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="font-semibold">Add an academic year</h2>
         <input placeholder="2026/2027" value={yf.name} onChange={(e) => setYf({ ...yf, name: e.target.value })} className={input} />
         <label className="flex flex-col gap-1 text-sm font-medium">Starts<input type="date" value={yf.start_date} onChange={(e) => setYf({ ...yf, start_date: e.target.value })} className={input} /></label>
@@ -110,7 +110,7 @@ export default function Years() {
         const f = tf[y.id] ?? { name: 'Term 1', start_date: '', end_date: '' }
         const setF = (patch: Partial<typeof f>) => setTf({ ...tf, [y.id]: { ...f, ...patch } })
         return (
-          <section key={y.id} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+          <section key={y.id} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="font-semibold">
               {y.name} <span className="font-normal text-slate-600">({formatDate(y.start_date)} to {formatDate(y.end_date)})</span>
               {y.is_current && <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">Current year</span>}

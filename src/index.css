@@ -2,15 +2,25 @@
 
 @theme {
   --color-brand: #1a237e;
+  --color-ink: #0f1547;
   --color-accent: #f9a825;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-feature-settings: "cv11", "ss01";
 }
-
-/* Bolder, easier to read text everywhere (the school works on phones in bright light). */
-body { font-weight: 500; }
-h1 { font-weight: 800; }
-h2, h3 { font-weight: 700; }
+h1 { font-weight: 700; letter-spacing: -0.02em; }
+h2, h3 { font-weight: 650; letter-spacing: -0.01em; }
 button, label { font-weight: 600; }
+
+/* Inputs: clear focus ring, and not stretched across a very wide screen. */
+input:not([type="checkbox"]):not([type="radio"]), select, textarea { background: #fff; transition: box-shadow .15s, border-color .15s; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-brand); box-shadow: 0 0 0 3px rgb(26 35 126 / 0.15); }
+main :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { max-width: 44rem; }
+main table input, main table select { max-width: none; }
+button { transition: background-color .15s, box-shadow .15s, opacity .15s; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }

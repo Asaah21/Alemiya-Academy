@@ -93,14 +93,14 @@ export default function StaffAttendance() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Staff Attendance</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Staff Attendance</h1>
         <Link to="/staff-attendance/summary" className="text-sm underline">Term summary</Link>
       </div>
-      <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
         Everyone starts as Present. Tap only the people who were absent, late or absent by permission, then Save the day.
       </p>
 
-      <div className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <button onClick={() => setDate(addDays(date, -1))} className={btn} aria-label="Previous day">◀</button>
         <div className="text-center">
           <input type="date" value={date} max={today()} onChange={(e) => e.target.value && setDate(e.target.value)} className={`${input} text-center`} aria-label="Date" />
@@ -122,7 +122,7 @@ export default function StaffAttendance() {
       )}
 
       {loading ? <p className="text-slate-600">Loading…</p> : holiday ? (
-        <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="font-semibold">Non-school day{holiday.reason ? `: ${holiday.reason}` : ''}</p>
           <p className="text-sm text-slate-600">This day is left out of staff attendance rates.</p>
           <button onClick={clearHoliday} className={btn}>Make this a school day again</button>
@@ -137,13 +137,13 @@ export default function StaffAttendance() {
           </div>
 
           {people.length === 0 ? (
-            <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active staff. Add them under Setup, Staff list.</p>
+            <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active staff. Add them under Setup, Staff list.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {people.map((p) => {
                 const m = marks[p.id]
                 return (
-                  <li key={p.id} className="flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm">
+                  <li key={p.id} className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                     <p className="font-medium">{p.full_name}{p.status === 'inactive' && <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs">Inactive</span>}</p>
                     <div className="grid grid-cols-4 gap-1" role="group" aria-label={`Attendance for ${p.full_name}`}>
                       {STAFF_STATUSES.map((s) => (

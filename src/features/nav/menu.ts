@@ -1,7 +1,8 @@
+import { BarChart3, Banknote, ClipboardCheck, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
 import type { UserRole } from '../../lib/users'
 
 export type NavLink = { label: string; path: string; roles: UserRole[] }
-export type Section = { id: string; label: string; path: string; roles: UserRole[]; hint: string; links: NavLink[] }
+export type Section = { id: string; label: string; path: string; roles: UserRole[]; hint: string; icon: LucideIcon; links: NavLink[] }
 export type Group = { title: string; sections: Section[] }
 
 const both: UserRole[] = ['admin', 'staff']
@@ -14,7 +15,7 @@ export const GROUPS: Group[] = [
     title: 'Academics',
     sections: [
       {
-        id: 'students', label: 'Students', path: '/hub/students', roles: both, hint: 'List, add, attendance, classes',
+        icon: Users, id: 'students', label: 'Students', path: '/hub/students', roles: both, hint: 'List, add, attendance, classes',
         links: [
           { label: 'Student list and totals', path: '/students', roles: both },
           { label: 'Add a new student', path: '/students/new', roles: both },
@@ -25,7 +26,7 @@ export const GROUPS: Group[] = [
         ],
       },
       {
-        id: 'staff', label: 'Staff', path: '/hub/staff', roles: admin, hint: 'Add staff, daily attendance',
+        icon: UserCog, id: 'staff', label: 'Staff', path: '/hub/staff', roles: admin, hint: 'Add staff, daily attendance',
         links: [
           { label: 'Staff list and add new', path: '/setup/staff', roles: admin },
           { label: 'Staff attendance', path: '/staff-attendance', roles: admin },
@@ -33,7 +34,7 @@ export const GROUPS: Group[] = [
         ],
       },
       {
-        id: 'exams', label: 'Exams', path: '/hub/exams', roles: both, hint: 'Scores, remarks, report cards',
+        icon: ClipboardCheck, id: 'exams', label: 'Exams', path: '/hub/exams', roles: both, hint: 'Scores, remarks, report cards',
         links: [
           { label: 'Enter scores', path: '/scores', roles: both },
           { label: 'Remarks', path: '/remarks', roles: both },
@@ -47,7 +48,7 @@ export const GROUPS: Group[] = [
     title: 'Administration',
     sections: [
       {
-        id: 'fees', label: 'Fees', path: '/hub/fees', roles: both, hint: 'Payments, balances, cash',
+        icon: Banknote, id: 'fees', label: 'Fees', path: '/hub/fees', roles: both, hint: 'Payments, balances, cash',
         links: [
           { label: 'Record a payment', path: '/fees', roles: both },
           { label: 'Fee balances: owed by each student or class', path: '/fees/balances', roles: both },
@@ -55,8 +56,8 @@ export const GROUPS: Group[] = [
           { label: 'Add or change fees for each class', path: '/setup/fees', roles: admin },
         ],
       },
-      { id: 'reports', label: 'Reports', path: '/reports', roles: admin, hint: 'Summaries and Excel', links: [] },
-      { id: 'setup', label: 'Set up', path: '/setup', roles: admin, hint: 'Term, school info, users', links: [] },
+      { icon: BarChart3, id: 'reports', label: 'Reports', path: '/reports', roles: admin, hint: 'Summaries and Excel', links: [] },
+      { icon: Settings, id: 'setup', label: 'Set up', path: '/setup', roles: admin, hint: 'Term, school info, users', links: [] },
     ],
   },
 ]

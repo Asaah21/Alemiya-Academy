@@ -44,7 +44,7 @@ export default function Backup() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Backup and export</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Backup and export</h1>
       <p className="text-sm text-slate-600">Download all the school's records. Do this at the end of every term and before the year-end promotion. Parent login codes are never included.</p>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       <button onClick={excel} disabled={busy !== null} className="rounded-lg bg-brand p-3 font-semibold text-white disabled:opacity-60">{busy === 'xlsx' ? 'Preparing…' : 'Download everything as Excel'}</button>

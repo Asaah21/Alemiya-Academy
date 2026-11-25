@@ -47,7 +47,7 @@ export default function Receipt({ r }: { r: ReceiptData }) {
           </>
         )}
       </dl>
-      <p className="my-3 border-y-2 border-slate-800 py-2 text-center text-2xl font-bold">{formatMoney(r.amount)}</p>
+      <p className="my-3 border-y-2 border-slate-800 py-2 text-center text-2xl font-bold tracking-tight text-slate-900">{formatMoney(r.amount)}</p>
       {r.balanceAfter !== null && (
         <p className="text-sm">
           Balance still owed for this term: <strong>{formatMoney(Math.max(r.balanceAfter, 0))}</strong>

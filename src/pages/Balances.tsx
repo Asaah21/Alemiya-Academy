@@ -51,7 +51,7 @@ export default function Balances() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Fee balances</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Fee balances</h1>
         <Link to="/fees" className="text-sm underline">Record payment</Link>
       </div>
       <div className="flex flex-col gap-4 print:hidden">
@@ -75,14 +75,14 @@ export default function Balances() {
             <p>{termName} · {classLabel}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
-            <div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Fees due this term</p><p className="font-bold">{formatMoney(totals.owed)}</p></div>
-            <div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Collected</p><p className="font-bold">{formatMoney(totals.paid)}</p></div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Fees due this term</p><p className="font-bold">{formatMoney(totals.owed)}</p></div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Collected</p><p className="font-bold">{formatMoney(totals.paid)}</p></div>
             <div className="rounded-xl bg-amber-100 p-3 shadow-sm"><p className="text-xs text-slate-600">Still to collect (with arrears)</p><p className="font-bold">{formatMoney(totals.due)}</p></div>
-            <div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Collected so far</p><p className="font-bold">{totals.collectionRate === null ? '–' : `${totals.collectionRate}%`}</p></div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Collected so far</p><p className="font-bold">{totals.collectionRate === null ? '–' : `${totals.collectionRate}%`}</p></div>
           </div>
           <p className="text-sm text-slate-600">{totals.owing} of {totals.students} students still owe.</p>
-          {shown.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">{rows.length === 0 ? 'No active students.' : 'Nobody owes anything. Well done!'}</p> : (
-            <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+          {shown.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">{rows.length === 0 ? 'No active students.' : 'Nobody owes anything. Well done!'}</p> : (
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[34rem] text-left text-sm">
                 <thead className="bg-slate-100"><tr><th className="p-3">Student</th><th className="p-3">Class</th><th className="p-3">Owed</th><th className="p-3">Paid</th><th className="p-3">Arrears</th><th className="p-3">Still owes</th></tr></thead>
                 <tbody>

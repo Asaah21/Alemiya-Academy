@@ -53,7 +53,7 @@ export default function Classes() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Classes</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Classes</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       {classes.length < STANDARD_CLASSES.length && (
         <button onClick={createStandard} className="rounded-lg bg-brand p-3 font-semibold text-white">
@@ -62,7 +62,7 @@ export default function Classes() {
       )}
       <ul className="flex flex-col gap-2">
         {classes.map((c) => (
-          <li key={c.id} className="rounded-xl bg-white p-3 shadow-sm">
+          <li key={c.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="font-medium">{c.name}</p>

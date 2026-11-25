@@ -63,8 +63,8 @@ export default function Remarks() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Remarks</h1>
-      <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Remarks</h1>
+      <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
         Write a short teacher remark and, if needed, a headmaster remark for each student. They are printed on the report card (up to {MAX} characters each).
       </p>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
@@ -77,7 +77,7 @@ export default function Remarks() {
       </select>
 
       {classId && termId && (loading ? <p className="text-slate-600">Loading…</p> : students.length === 0 ? (
-        <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
+        <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
       ) : (
         <>
           <p className="text-sm text-slate-600">{filled} of {students.length} students have a remark.</p>
@@ -86,7 +86,7 @@ export default function Remarks() {
               const r = remarks[s.id]
               const over = r.teacher.length > MAX || r.head.length > MAX
               return (
-                <li key={s.id} className={`flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ${over ? 'ring-2 ring-red-500' : ''}`}>
+                <li key={s.id} className={`flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm ${over ? 'ring-2 ring-red-500' : ''}`}>
                   <p className="font-medium">{s.full_name} <span className="text-sm font-normal text-slate-600">{s.admission_no}</span></p>
                   <label className="flex flex-col text-xs text-slate-600">Teacher remark ({r.teacher.length}/{MAX})
                     <textarea rows={2} value={r.teacher} onChange={(e) => set(s.id, { teacher: e.target.value })} className={`${input} text-sm`} />

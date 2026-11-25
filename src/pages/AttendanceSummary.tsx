@@ -74,7 +74,7 @@ export default function AttendanceSummary() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Attendance summary</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Attendance summary</h1>
         <Link to="/attendance" className="text-sm underline">Enter attendance</Link>
       </div>
 
@@ -87,7 +87,7 @@ export default function AttendanceSummary() {
 
       {!loading && !error && term && (
         <>
-          <div className="rounded-xl bg-white p-4 shadow-sm">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-sm text-slate-600">Whole school, recorded weeks only</p>
             <p className="text-3xl font-bold text-brand">{show(school)}</p>
           </div>
@@ -100,7 +100,7 @@ export default function AttendanceSummary() {
               const m = missing(c.id)
               const students = totals.filter((t) => t.class_id === c.id)
               return (
-                <li key={c.id} className="rounded-xl bg-white p-3 shadow-sm">
+                <li key={c.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                   <button onClick={() => toggle(c)} className="flex w-full items-center justify-between gap-2 text-left">
                     <span>
                       <span className="block font-medium">{c.name}</span>

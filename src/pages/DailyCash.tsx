@@ -39,7 +39,7 @@ export default function DailyCash() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Daily cash</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Daily cash</h1>
         <Link to="/fees/balances" className="text-sm underline">Balances</Link>
       </div>
       <input type="date" max={today()} value={date} onChange={(e) => setDate(e.target.value)} className={`${input} print:hidden`} aria-label="Date" />
@@ -54,14 +54,14 @@ export default function DailyCash() {
           </div>
           {sum.byReceiver.length > 0 && (
             <ul className="flex flex-col gap-2">
-              {sum.byReceiver.map((r) => <li key={r.receiver} className="flex justify-between rounded-xl bg-white p-3 shadow-sm"><span>Received by {r.receiver} ({r.count})</span><strong>{formatMoney(r.total)}</strong></li>)}
+              {sum.byReceiver.map((r) => <li key={r.receiver} className="flex justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><span>Received by {r.receiver} ({r.count})</span><strong>{formatMoney(r.total)}</strong></li>)}
             </ul>
           )}
           {sum.voidedCount > 0 && <p className="rounded-xl bg-amber-100 p-3 text-sm text-amber-900">{sum.voidedCount} voided payment{sum.voidedCount === 1 ? '' : 's'} ({formatMoney(sum.voidedTotal)}) are not counted.</p>}
-          {rows.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No payments on this day.</p> : (
+          {rows.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No payments on this day.</p> : (
             <ul className="flex flex-col gap-2">
               {rows.map((r) => (
-                <li key={r.id} className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+                <li key={r.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                   <p className={r.status === 'void' ? 'text-slate-400 line-through' : ''}><span className="block font-medium">{r.student}</span><span className="text-sm">{r.receipt_no}</span></p>
                   <strong className={r.status === 'void' ? 'text-slate-400 line-through' : ''}>{formatMoney(r.amount)}</strong>
                 </li>

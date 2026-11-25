@@ -93,7 +93,7 @@ export default function SummaryReports() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Summary reports</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Summary reports</h1>
         <Link to="/reports" className="text-sm underline">Reports</Link>
       </div>
       <div className="flex flex-col gap-3 print:hidden">
@@ -126,8 +126,8 @@ export default function SummaryReports() {
       {termId && !loading && !error && (
         <>
           <div className="hidden print:block"><h1 className="text-xl font-bold">{schoolName}: {TITLES[kind].toLowerCase()} summary</h1><p>{termLabel} · {classLabel} · {genderLabel}</p></div>
-          {table.rows.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">Nothing to show for these choices.</p> : (
-            <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+          {table.rows.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">Nothing to show for these choices.</p> : (
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[32rem] text-sm">
                 <thead className="bg-slate-100">
                   <tr>{table.headings.map((h, i) => <th key={h} className={`p-2 ${i === 0 ? 'text-left' : 'text-right'}`}>{h}</th>)}</tr>

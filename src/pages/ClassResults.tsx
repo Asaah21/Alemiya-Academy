@@ -67,7 +67,7 @@ export default function ClassResults() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Class results</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Class results</h1>
         <Link to="/scores" className="text-sm underline">Enter scores</Link>
       </div>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
@@ -85,11 +85,11 @@ export default function ClassResults() {
       {classId && termId && !loading && !error && (
         subjects.length === 0 ? (
           <>
-            <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes). Classes without scores (such as Creche) can still be published below.</p>
+            <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes). Classes without scores (such as Creche) can still be published below.</p>
             {students.length > 0 && <PublishPanel classId={classId} termId={termId} complete />}
           </>
         )
-        : students.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
+        : students.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
         : (
           <>
             <PublishPanel classId={classId} termId={termId} complete={results.complete} />
@@ -104,7 +104,7 @@ export default function ClassResults() {
                 {results.missing.length > 40 && <p className="mt-1">…and {results.missing.length - 40} more.</p>}
               </div>
             )}
-            <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[32rem] text-left text-sm">
                 <thead className="bg-slate-100">
                   <tr>
