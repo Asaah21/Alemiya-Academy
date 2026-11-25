@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { MOVEMENT_LABELS, validateMovement } from '../../lib/students'
 import { formatDate } from '../../lib/terms'
 import { supabase } from '../../lib/supabase'
+import { friendlyError } from '../../lib/errors'
 
 type Row = {
   id: string; movement: string; moved_on: string; reason: string | null; created_at: string
@@ -45,7 +46,7 @@ export default function Movements({ studentId, status, isAdmin, onChanged }: { s
     const what = active ? MOVEMENT_LABELS[movement].toLowerCase() : 'return to school'
     if (!window.confirm(`Record: ${what}, on ${formatDate(f.moved_on)}? This will appear in the student's history and cannot be deleted.`)) return
     const { error } = await supabase!.rpc('record_movement', { p_student: studentId, p_movement: movement, p_moved_on: f.moved_on, p_reason: f.reason })
-    if (error) return setMsg({ ok: false, text: error.message || 'Could not save.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save.') })
     setF({ movement: '', moved_on: today(), reason: '' })
     setMsg({ ok: true, text: 'Recorded.' })
     onChanged()

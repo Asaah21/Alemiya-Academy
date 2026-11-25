@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { defaultPromotionDate, nextClassMap, planPromotion, type PromoClass } from '../lib/promotion'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Year = { id: string; name: string }
 type Term = { id: string; academic_year_id: string; status: string; end_date: string }
@@ -47,7 +48,7 @@ export default function Promotion() {
     setBusy(true); setMsg(null)
     const { data, error } = await supabase!.rpc('promote_year', { p_year: yearId, p_repeaters: [...repeaters], p_moved_on: date })
     setBusy(false)
-    if (error) return setMsg({ ok: false, text: error.message })
+    if (error) return setMsg({ ok: false, text: friendlyError(error) })
     const r = (Array.isArray(data) ? data[0] : data) as { promoted: number; repeated: number; graduated: number }
     setMsg({ ok: true, text: `Done. ${r.promoted} moved up, ${r.repeated} repeat, ${r.graduated} graduated.` })
     load()
@@ -55,7 +56,7 @@ export default function Promotion() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Year-end promotion</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Year-end promotion</h1>
       <p className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">
         Before you promote: close every term of the year, and print or download the report cards. After promotion each child belongs to the new class, and the old report cards will no longer show on the parents' phones.
       </p>

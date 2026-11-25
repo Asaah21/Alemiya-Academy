@@ -27,6 +27,7 @@ import Staff from './pages/Staff'
 import StaffAttendance from './pages/StaffAttendance'
 import SummaryReports from './pages/SummaryReports'
 import TermClose from './pages/TermClose'
+import Hub from './pages/Hub'
 import Promotion from './pages/Promotion'
 import Backup from './pages/Backup'
 import Turnover from './pages/Turnover'
@@ -44,6 +45,7 @@ export default function App() {
       <Route path="/parent" element={<ParentLogin />} />
       <Route path="/parent/home" element={<ParentHome />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+      <Route path="/hub/:id" element={<RequireAuth><Hub /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
       <Route path="/fees" element={<RequireAuth><Payments /></RequireAuth>} />
       <Route path="/fees/balances" element={<RequireAuth><Balances /></RequireAuth>} />

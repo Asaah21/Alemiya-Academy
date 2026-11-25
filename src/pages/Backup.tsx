@@ -2,6 +2,7 @@ import writeXlsxFile from 'write-excel-file/browser'
 import { useState } from 'react'
 import { backupFileName, EXCEL_TABLES, fetchAll, JSON_TABLES, sheetFrom } from '../lib/backup'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 const today = () => new Date().toISOString().slice(0, 10)
 const load = (table: string) => fetchAll((from, to) => supabase!.from(table).select('*').range(from, to))
@@ -18,7 +19,7 @@ export default function Backup() {
       await writeXlsxFile(sheets as never).toFile(backupFileName('xlsx', today()))
       setMsg({ ok: true, text: 'The Excel file has been downloaded. Keep it somewhere safe, away from this phone or computer.' })
     } catch (e) {
-      setMsg({ ok: false, text: e instanceof Error ? e.message : 'The export failed' })
+      setMsg({ ok: false, text: friendlyError(e, 'The export failed') })
     }
     setBusy(null)
   }
@@ -36,14 +37,14 @@ export default function Backup() {
       URL.revokeObjectURL(a.href)
       setMsg({ ok: true, text: 'The full backup file has been downloaded. Keep it somewhere safe.' })
     } catch (e) {
-      setMsg({ ok: false, text: e instanceof Error ? e.message : 'The backup failed' })
+      setMsg({ ok: false, text: friendlyError(e, 'The backup failed') })
     }
     setBusy(null)
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Backup and export</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Backup and export</h1>
       <p className="text-sm text-slate-600">Download all the school's records. Do this at the end of every term and before the year-end promotion. Parent login codes are never included.</p>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       <button onClick={excel} disabled={busy !== null} className="rounded-lg bg-brand p-3 font-semibold text-white disabled:opacity-60">{busy === 'xlsx' ? 'Preparing…' : 'Download everything as Excel'}</button>

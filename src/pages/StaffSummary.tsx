@@ -52,7 +52,7 @@ export default function StaffSummary() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold">Staff attendance summary</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Staff attendance summary</h1>
         <Link to="/staff-attendance" className="text-sm underline">Take attendance</Link>
       </div>
 
@@ -98,7 +98,7 @@ export default function StaffSummary() {
               </table>
             </div>
             <p className="text-xs text-slate-500">
-              Late counts as present and is also shown on its own. On-leave days are not absences and are left out of the percentage. Holidays and days not saved are not counted.
+              Late counts as present and is also shown on its own. Days absent by permission are not counted as absences and are left out of the percentage. Holidays and days not saved are not counted.
             </p>
           </>
         )

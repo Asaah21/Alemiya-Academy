@@ -5,6 +5,7 @@ import { weeksDue, weeksNotRecorded } from '../lib/attendance'
 import { formatDate } from '../lib/terms'
 import { addDays, checkWeek, mondayOf, weekLabel } from '../lib/weeks'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; full_name: string; admission_no: string }
 
@@ -73,7 +74,7 @@ export default function WeeklyAttendance() {
     setBad([])
     const entries = students.map((s) => ({ student_id: s.id, days_absent: absent[s.id] ?? 0 }))
     const { error } = await supabase!.rpc('save_attendance_week', { p_class: classId, p_week_start: week, p_school_days: schoolDays, p_entries: entries })
-    if (error) return setMsg({ ok: false, text: error.message || 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setRecorded(true)
     setMsg({ ok: true, text: `Saved. ${totalAbsent === 0 ? 'Everyone was present all week.' : `${totalAbsent} student${totalAbsent === 1 ? ' was' : 's were'} absent; all others were present.`}` })
   }
@@ -82,7 +83,7 @@ export default function WeeklyAttendance() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Weekly Attendance</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Weekly Attendance</h1>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
         Fill this in on Friday. Choose the class, then pick how many days each student was absent. Students you leave at 0 count as present every day.
       </p>

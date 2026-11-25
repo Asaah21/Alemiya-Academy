@@ -4,6 +4,7 @@ import { useSchool } from '../features/school/SchoolProvider'
 import type { GradeRow } from '../lib/grades'
 import { checkScore, gradeFor, isComplete, subjectTotal } from '../lib/results'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; full_name: string; admission_no: string }
 type Entry = { classText: string; examText: string; absent: boolean }
@@ -88,14 +89,14 @@ export default function EnterScores() {
     if (Object.keys(errs).length) return setMsg({ ok: false, text: `Fix the ${Object.keys(errs).length} marked student${Object.keys(errs).length === 1 ? '' : 's'} first. Nothing was saved.` })
     const rows = students.map((s) => ({ student_id: s.id, class_score: checks[s.id].classScore, exam_score: checks[s.id].examScore, is_absent: entries[s.id].absent }))
     const { error } = await supabase!.rpc('save_scores', { p_class: classId, p_subject: subjectId, p_term: termId, p_rows: rows })
-    if (error) return setMsg({ ok: false, text: error.message || 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setMsg({ ok: true, text: `Saved. ${completeCount} of ${students.length} students have complete scores.` })
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Enter Scores</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Enter Scores</h1>
         <Link to="/scores/results" className="text-sm underline">Class results</Link>
       </div>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">

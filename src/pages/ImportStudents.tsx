@@ -74,7 +74,7 @@ export default function ImportStudents() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Import students</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Import students</h1>
         <Link to="/students" className="text-sm underline">Back to students</Link>
       </div>
 

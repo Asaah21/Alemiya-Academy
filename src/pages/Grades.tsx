@@ -45,7 +45,7 @@ export default function Grades() {
   const input = 'rounded-lg border border-slate-300 p-3 text-base'
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Grading scale</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Grading scale</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       {rows.length === 0 && (
         <button onClick={loadStarter} className="rounded-lg bg-brand p-3 font-semibold text-white">

@@ -61,7 +61,7 @@ export default function Users() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Users</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Users</h1>
       {notice && (
         <p className={`rounded-xl p-4 text-sm ${notice.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{notice.text}</p>
       )}

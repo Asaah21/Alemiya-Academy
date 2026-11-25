@@ -163,7 +163,7 @@ export default function ParentHome() {
         <button onClick={signOut} className="rounded-lg border border-slate-300 px-3 py-2 text-sm">Log out</button>
       </header>
       <section className="rounded-xl bg-white p-4 shadow-sm print:hidden">
-        <p className="text-2xl font-bold">{c.fullName}</p>
+        <p className="text-3xl font-extrabold text-brand">{c.fullName}</p>
         <p className="text-slate-600">{c.className} · {c.admissionNo}</p>
       </section>
       <nav className="flex gap-2 print:hidden">

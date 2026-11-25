@@ -39,7 +39,7 @@ export default function DailyCash() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold">Daily cash</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Daily cash</h1>
         <Link to="/fees/balances" className="text-sm underline">Balances</Link>
       </div>
       <input type="date" max={today()} value={date} onChange={(e) => setDate(e.target.value)} className={`${input} print:hidden`} aria-label="Date" />

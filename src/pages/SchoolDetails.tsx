@@ -54,7 +54,7 @@ export default function SchoolDetails() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">School details</h1>
+      <h1 className="text-3xl font-extrabold text-brand">School details</h1>
       <form onSubmit={save} className="flex flex-col gap-4 rounded-xl bg-white p-4 shadow-sm">
         <label className={label}>School name<input value={form.school_name} onChange={set('school_name')} className={input} /></label>
         <label className={label}>Location<input value={form.location} onChange={set('location')} className={input} /></label>

@@ -59,7 +59,7 @@ export default function Turnover() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold">Enrolment turnover</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Enrolment turnover</h1>
         <Link to="/reports" className="text-sm underline">Reports</Link>
       </div>
       <div className="flex flex-col gap-3 print:hidden">
