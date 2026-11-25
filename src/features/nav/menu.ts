@@ -15,14 +15,13 @@ export const GROUPS: Group[] = [
     title: 'Academics',
     sections: [
       {
-        icon: Users, id: 'students', label: 'Students', path: '/hub/students', roles: both, hint: 'List, add, attendance, classes',
+        icon: Users, id: 'students', label: 'Students', path: '/hub/students', roles: both, hint: 'List, add, attendance',
         links: [
-          { label: 'Student list and totals', path: '/students', roles: both },
           { label: 'Add a new student', path: '/students/new', roles: both },
+          { label: 'Student list', path: '/students', roles: both },
           { label: 'Import students from Excel', path: '/students/import', roles: admin },
           { label: 'Weekly attendance', path: '/attendance', roles: both },
           { label: 'Attendance summary', path: '/attendance/summary', roles: both },
-          { label: 'Classes', path: '/setup/classes', roles: admin },
         ],
       },
       {
