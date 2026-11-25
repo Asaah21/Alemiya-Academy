@@ -106,9 +106,9 @@ describe('database rules', () => {
     ).rejects.toThrow()
   })
 
-  it('G6: blocks scores above 30 and 70', async () => {
-    await expect(db.exec(`update scores set class_score = 31 where id = '${ids.score}'`)).rejects.toThrow(/Class score/)
-    await expect(db.exec(`update scores set exam_score = 71 where id = '${ids.score}'`)).rejects.toThrow(/Exam score/)
+  it('G6: blocks a score above the maximum (100)', async () => {
+    await expect(db.exec(`update scores set exam_score = 101 where id = '${ids.score}'`)).rejects.toThrow(/cannot be more than 100/)
+    await expect(db.exec(`update scores set class_score = 101 where id = '${ids.score}'`)).rejects.toThrow(/cannot be more than/)
   })
 
   it('G6: blocks negative scores', async () => {
@@ -148,7 +148,7 @@ describe('database rules', () => {
     await db.exec(`update students set guardian_phone = '0240000000' where id = '${ids.student}'`)
     await db.exec(`update students set guardian_phone = '0241111111' where id = '${ids.student}'`)
     const res = await db.query<{ old_values: { guardian_phone: string | null } }>(
-      `select old_values from history where table_name = 'students' and record_id = '${ids.student}' order by changed_at, id`,
+      `select old_values from history where table_name = 'students' and record_id = '${ids.student}' order by changed_at, ctid`,
     )
     expect(res.rows).toHaveLength(2)
     expect(res.rows[1].old_values.guardian_phone).toBe('0240000000')

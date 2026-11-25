@@ -128,3 +128,22 @@ describe('computeClassResults (rules G4, G5, G7)', () => {
     expect(computeClassResults(students, [], []).complete).toBe(false)
   })
 })
+
+describe('single score out of 100', () => {
+  it('checks one mark against the maximum', async () => {
+    const { checkSingleScore } = await import('./results')
+    expect(checkSingleScore('85', false, 100)).toEqual({ score: 85, error: null })
+    expect(checkSingleScore('', false, 100)).toEqual({ score: null, error: null })
+    expect(checkSingleScore('101', false, 100).error).toMatch(/more than 100/)
+    expect(checkSingleScore('abc', false, 100).error).toBeTruthy()
+    expect(checkSingleScore('50', true, 100)).toEqual({ score: null, error: null })
+  })
+  it('stores one mark as exam score with class score 0, and reads older rows as class + exam', async () => {
+    const { markToColumns, savedMark } = await import('./results')
+    expect(markToColumns(85)).toEqual({ class_score: 0, exam_score: 85 })
+    expect(markToColumns(null)).toEqual({ class_score: null, exam_score: null })
+    expect(savedMark(0, 85)).toBe(85)
+    expect(savedMark(24, 51.5)).toBe(75.5)
+    expect(savedMark(null, null)).toBeNull()
+  })
+})

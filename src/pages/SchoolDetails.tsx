@@ -1,12 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
+import { friendlyError } from '../lib/errors'
 import { supabase } from '../lib/supabase'
 
 type Form = {
   school_name: string; location: string; district: string; region: string; circuit: string
   next_term_opening_date: string; class_score_max: string; exam_score_max: string
 }
-const empty: Form = { school_name: '', location: '', district: '', region: '', circuit: '', next_term_opening_date: '', class_score_max: '30', exam_score_max: '70' }
+const empty: Form = { school_name: '', location: '', district: '', region: '', circuit: '', next_term_opening_date: '', class_score_max: '30', exam_score_max: '100' }
 
 export default function SchoolDetails() {
   const { reload } = useSchool()
@@ -32,7 +33,7 @@ export default function SchoolDetails() {
     e.preventDefault()
     const cls = Number(form.class_score_max), exam = Number(form.exam_score_max)
     if (!form.school_name.trim()) return setMsg({ ok: false, text: 'Enter the school name.' })
-    if (!(cls > 0) || !(exam > 0)) return setMsg({ ok: false, text: 'Class score and exam score must be more than 0.' })
+    if (!(exam > 0) || exam > 100) return setMsg({ ok: false, text: 'Scores must be out of a number between 1 and 100.' })
     const { error } = await supabase!.from('settings').upsert(
       {
         singleton: true,
@@ -44,7 +45,7 @@ export default function SchoolDetails() {
       },
       { onConflict: 'singleton' },
     )
-    if (error) return setMsg({ ok: false, text: 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setMsg({ ok: true, text: 'Saved.' })
     reload()
   }
@@ -62,11 +63,8 @@ export default function SchoolDetails() {
         <label className={label}>Region<input value={form.region} onChange={set('region')} className={input} /></label>
         <label className={label}>Circuit<input value={form.circuit} onChange={set('circuit')} className={input} /></label>
         <label className={label}>Next term opens (printed on report cards)<input type="date" value={form.next_term_opening_date} onChange={set('next_term_opening_date')} className={input} /></label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className={label}>Class score out of<input inputMode="decimal" value={form.class_score_max} onChange={set('class_score_max')} className={input} /></label>
-          <label className={label}>Exam score out of<input inputMode="decimal" value={form.exam_score_max} onChange={set('exam_score_max')} className={input} /></label>
-        </div>
-        <p className="text-xs text-slate-500">Marks are entered out of these numbers; the total is out of 100 when they add up to 100.</p>
+        <label className={label}>Scores are entered out of<input inputMode="decimal" value={form.exam_score_max} onChange={set('exam_score_max')} className={input} /></label>
+        <p className="text-xs text-slate-500">Normally 100. Grades are worked out on a scale of 0 to 100.</p>
         {msg && <p className={`rounded-lg p-3 text-sm ${msg.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
         <button className="rounded-lg bg-brand p-3 font-semibold text-white">Save</button>
       </form>
