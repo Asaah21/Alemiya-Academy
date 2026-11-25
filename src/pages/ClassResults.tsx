@@ -67,7 +67,7 @@ export default function ClassResults() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Class results</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Class results</h1>
         <Link to="/scores" className="text-sm underline">Enter scores</Link>
       </div>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">

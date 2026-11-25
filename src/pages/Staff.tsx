@@ -56,7 +56,7 @@ export default function Staff() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Staff</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Staff</h1>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
         This is the list of people who work at the school (used for daily staff attendance). To let someone log in, add them under Users as well.
       </p>

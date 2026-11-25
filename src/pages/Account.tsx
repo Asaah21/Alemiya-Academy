@@ -21,7 +21,7 @@ export default function Account() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">My account</h1>
+      <h1 className="text-3xl font-extrabold text-brand">My account</h1>
       <form onSubmit={submit} className="flex max-w-sm flex-col gap-4 rounded-xl bg-white p-4 shadow-sm">
         <h2 className="font-semibold">Change my password</h2>
         <label className="flex flex-col gap-1 text-sm font-medium">

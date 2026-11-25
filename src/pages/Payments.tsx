@@ -7,6 +7,7 @@ import { formatMoney, totalFees } from '../lib/fees'
 import { balanceOf, receiptDate, validatePayment, wouldOverpay, type Payment } from '../lib/payments'
 import { filterStudents } from '../lib/students'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; admission_no: string; full_name: string; guardian_name: string | null; guardian_phone: string | null; class_id: string | null; status: string }
 type Term = { id: string; name: string; academic_years: { name: string } | { name: string }[] | null }
@@ -100,7 +101,7 @@ export default function Payments() {
     if (reason === undefined || reason === '') return
     if (reason.length < 3) return setMsg({ ok: false, text: 'Please give a reason of at least 3 letters.' })
     const { error } = await supabase!.rpc('void_payment', { p_payment: p.id, p_reason: reason })
-    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: `Receipt ${p.receipt_no} voided. Record the correct payment if needed.` })
+    setMsg(error ? { ok: false, text: friendlyError(error) } : { ok: true, text: `Receipt ${p.receipt_no} voided. Record the correct payment if needed.` })
     setReceipt(null)
     load()
   }
@@ -120,7 +121,7 @@ export default function Payments() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 print:hidden">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Fees</h1>
+          <h1 className="text-3xl font-extrabold text-brand">Fees</h1>
           <span className="flex gap-3 text-sm underline">
             <Link to="/fees/balances">Balances</Link>
             {isAdmin && <Link to="/fees/cash">Daily cash</Link>}

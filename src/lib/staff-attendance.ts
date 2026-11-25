@@ -6,7 +6,7 @@ export const STAFF_STATUSES: { value: StaffStatus; label: string }[] = [
   { value: 'present', label: 'Present' },
   { value: 'absent', label: 'Absent' },
   { value: 'late', label: 'Late' },
-  { value: 'on_leave', label: 'On leave' },
+  { value: 'on_leave', label: 'Absent by permission' },
 ]
 
 export const isWeekend = (iso: string): boolean => {
@@ -53,7 +53,7 @@ export type StaffSummaryRow = {
   rate: number | null // present / (present + absent), percent, null when no days count
 }
 
-// Late counts as present and is also counted on its own. On leave is not an absence and is left out of the rate.
+// Late counts as present and is also counted on its own. Absent by permission is not counted as an absence and is left out of the rate.
 export function summariseStaff(counts: StaffCounts[], people: { id: string; full_name: string }[]): StaffSummaryRow[] {
   const by = new Map(counts.map((c) => [c.staff_id, c]))
   return people
@@ -76,7 +76,7 @@ export function summariseStaff(counts: StaffCounts[], people: { id: string; full
     .sort((a, b) => a.name.localeCompare(b.name))
 }
 
-export const SUMMARY_HEADINGS = ['Name', 'Days recorded', 'Present (incl. late)', 'Late', 'Absent', 'On leave', 'Attendance %']
+export const SUMMARY_HEADINGS = ['Name', 'Days recorded', 'Present (incl. late)', 'Late', 'Absent', 'Absent by permission', 'Attendance %']
 export function summaryTable(rows: StaffSummaryRow[]): (string | number)[][] {
   return rows.map((r) => [r.name, r.daysRecorded, r.present, r.late, r.absent, r.onLeave, r.rate === null ? '' : r.rate])
 }

@@ -5,6 +5,7 @@ import { daysNotRecorded, isWeekend, schoolDaysUpTo, STAFF_STATUSES, type StaffS
 import { formatDate } from '../lib/terms'
 import { addDays } from '../lib/weeks'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Person = { id: string; full_name: string; status: 'active' | 'inactive' }
 type Mark = { status: StaffStatus; note: string }
@@ -66,7 +67,7 @@ export default function StaffAttendance() {
   async function save() {
     const entries = people.map((p) => ({ staff_id: p.id, status: marks[p.id].status, note: marks[p.id].note }))
     const { error } = await supabase!.rpc('save_staff_attendance', { p_date: date, p_entries: entries })
-    if (error) return setMsg({ ok: false, text: error.message || 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setRecorded(true)
     setMsg({ ok: true, text: exceptions === 0 ? 'Saved. Everyone was present.' : `Saved. ${exceptions} exception${exceptions === 1 ? '' : 's'} recorded; everyone else was present.` })
   }
@@ -75,7 +76,7 @@ export default function StaffAttendance() {
     const reason = window.prompt('Why is there no school on this day? (for example Public holiday)', '')
     if (reason === null) return
     const { error } = await supabase!.rpc('set_non_school_day', { p_date: date, p_reason: reason })
-    if (error) return setMsg({ ok: false, text: error.message })
+    if (error) return setMsg({ ok: false, text: friendlyError(error) })
     setMsg({ ok: true, text: 'Marked as a non-school day. It is left out of attendance rates.' })
     load()
   }
@@ -92,11 +93,11 @@ export default function StaffAttendance() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Staff Attendance</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Staff Attendance</h1>
         <Link to="/staff-attendance/summary" className="text-sm underline">Term summary</Link>
       </div>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
-        Everyone starts as Present. Tap only the people who were absent, late or on leave, then Save the day.
+        Everyone starts as Present. Tap only the people who were absent, late or absent by permission, then Save the day.
       </p>
 
       <div className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">

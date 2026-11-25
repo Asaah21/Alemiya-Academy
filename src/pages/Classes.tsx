@@ -53,7 +53,7 @@ export default function Classes() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Classes</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Classes</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       {classes.length < STANDARD_CLASSES.length && (
         <button onClick={createStandard} className="rounded-lg bg-brand p-3 font-semibold text-white">

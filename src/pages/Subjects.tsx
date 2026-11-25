@@ -37,7 +37,7 @@ export default function Subjects() {
   const input = 'rounded-lg border border-slate-300 p-3 text-base'
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Subjects</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Subjects</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       <form onSubmit={add} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
         <h2 className="font-semibold">Add a subject</h2>

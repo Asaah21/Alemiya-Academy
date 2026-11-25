@@ -75,7 +75,7 @@ export default function FeeItems() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Fees</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Fees</h1>
       <p className="text-sm text-slate-600">Set what each class pays in a term. Every active student in the class owes the total.</p>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
         <option value="">Choose the term</option>

@@ -78,7 +78,7 @@ export default function ReportCards() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold">Report Cards</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Report Cards</h1>
         <Link to="/scores/results" className="text-sm underline">Class results</Link>
       </div>
 

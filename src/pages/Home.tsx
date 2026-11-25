@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
-import { menuFor } from '../features/nav/menu'
+import { sectionsFor } from '../features/nav/menu'
 import { balanceTotals, type BalanceRow } from '../lib/balances'
 import { formatMoney } from '../lib/fees'
 import { cashTotal, classesMissingAttendance, type HomeClass } from '../lib/home'
@@ -48,18 +48,18 @@ export default function Home() {
 
   if (state.status !== 'ready') return null
   const { profile } = state
-  const items = menuFor(profile.role).filter((m) => m.path !== '/')
+  const groups = sectionsFor(profile.role)
   const monday = mondayOf(new Date().toISOString().slice(0, 10))
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Welcome, {profile.full_name}</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Welcome, {profile.full_name}</h1>
       {n && (
         <div className="grid grid-cols-2 gap-3">
-          <div className={card}><p className="text-2xl font-bold">{n.students}</p><p className="text-sm text-slate-600">Students in school</p></div>
+          <div className={card}><p className="text-3xl font-extrabold">{n.students}</p><p className="text-sm text-slate-600">Students in school</p></div>
           <div className={card}><p className="text-lg font-bold">{n.term ?? 'No current term'}</p><p className="text-sm text-slate-600">Current term</p></div>
-          {isAdmin && n.cash !== null && <div className={card}><p className="text-xl font-bold">{formatMoney(n.cash)}</p><p className="text-sm text-slate-600">Cash received today</p></div>}
-          {isAdmin && n.due !== null && <Link to="/fees/balances" className={card}><p className="text-xl font-bold">{formatMoney(n.due)}</p><p className="text-sm text-slate-600">Fees still owed</p></Link>}
+          {isAdmin && n.cash !== null && <div className={card}><p className="text-2xl font-extrabold">{formatMoney(n.cash)}</p><p className="text-sm text-slate-600">Cash received today</p></div>}
+          {isAdmin && n.due !== null && <Link to="/fees/balances" className={card}><p className="text-2xl font-extrabold">{formatMoney(n.due)}</p><p className="text-sm text-slate-600">Fees still owed</p></Link>}
         </div>
       )}
       {n && n.term && (
@@ -70,13 +70,19 @@ export default function Home() {
             : <p className="mt-1 text-sm text-amber-900">Not yet recorded: {n.missing.map((c) => c.name).join(', ')}. <Link to="/attendance" className="underline">Record now</Link></p>}
         </div>
       )}
-      <div className="grid grid-cols-2 gap-3">
-        {items.map((m) => (
-          <Link key={m.path} to={m.path} className="rounded-xl bg-white p-5 text-center font-medium shadow-sm">
-            {m.label}
-          </Link>
-        ))}
-      </div>
+      {groups.map((g) => (
+        <section key={g.title} className="flex flex-col gap-2">
+          <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">{g.title}</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {g.sections.map((m) => (
+              <Link key={m.id} to={m.path} className="rounded-xl border-l-4 border-brand bg-white p-4 shadow-sm active:bg-slate-100">
+                <p className="text-lg font-extrabold">{m.label}</p>
+                <p className="text-xs font-medium text-slate-600">{m.hint}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   )
 }

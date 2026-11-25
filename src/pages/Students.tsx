@@ -36,7 +36,7 @@ export default function Students() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Students</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Students</h1>
         <div className="flex gap-2">
           {isAdmin && <Link to="/students/import" className="rounded-lg border border-slate-300 px-4 py-3 font-medium">Import</Link>}
           <Link to="/students/new" className="rounded-lg bg-brand px-4 py-3 font-semibold text-white">Add student</Link>

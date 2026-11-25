@@ -51,7 +51,7 @@ export default function Balances() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold">Fee balances</h1>
+        <h1 className="text-3xl font-extrabold text-brand">Fee balances</h1>
         <Link to="/fees" className="text-sm underline">Record payment</Link>
       </div>
       <div className="flex flex-col gap-4 print:hidden">

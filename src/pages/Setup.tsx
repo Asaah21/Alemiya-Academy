@@ -1,46 +1,26 @@
 import { Link } from 'react-router-dom'
 
-// Setup home. T06 onward add the other setup screens here.
+const LINKS: { to: string; label: string }[] = [
+  { to: '/setup/years', label: 'Set the current term, years and terms' },
+  { to: '/setup/school', label: 'School info' },
+  { to: '/setup/classes', label: 'Classes' },
+  { to: '/setup/subjects', label: 'Subjects' },
+  { to: '/setup/grades', label: 'Grades' },
+  { to: '/setup/fees', label: 'Fees: what each class pays' },
+  { to: '/setup/users', label: 'Users: staff logins' },
+  { to: '/setup/parents', label: 'Parent access slips' },
+  { to: '/setup/close', label: 'Close a term' },
+  { to: '/setup/promotion', label: 'Year-end promotion' },
+  { to: '/setup/backup', label: 'Backup and export' },
+]
+
 export default function Setup() {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Setup</h1>
-      <Link to="/setup/school" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        School details
-      </Link>
-      <Link to="/setup/years" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Academic years and terms
-      </Link>
-      <Link to="/setup/classes" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Classes
-      </Link>
-      <Link to="/setup/subjects" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Subjects
-      </Link>
-      <Link to="/setup/grades" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Grading scale
-      </Link>
-      <Link to="/setup/fees" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Fees: what each class pays
-      </Link>
-      <Link to="/setup/close" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Close a term
-      </Link>
-      <Link to="/setup/promotion" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Year-end promotion
-      </Link>
-      <Link to="/setup/backup" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Backup and export
-      </Link>
-      <Link to="/setup/parents" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Parent access slips
-      </Link>
-      <Link to="/setup/staff" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Staff list
-      </Link>
-      <Link to="/setup/users" className="rounded-xl bg-white p-4 font-medium shadow-sm">
-        Users: add staff, reset passwords
-      </Link>
+    <div className="flex flex-col gap-3">
+      <h1 className="text-3xl font-extrabold text-brand">Set up</h1>
+      {LINKS.map((l) => (
+        <Link key={l.to} to={l.to} className="rounded-xl border-l-4 border-brand bg-white p-5 text-lg font-bold shadow-sm active:bg-slate-100">{l.label}</Link>
+      ))}
     </div>
   )
 }

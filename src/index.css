@@ -8,3 +8,9 @@
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
+
+/* Bolder, easier to read text everywhere (the school works on phones in bright light). */
+body { font-weight: 500; }
+h1 { font-weight: 800; }
+h2, h3 { font-weight: 700; }
+button, label { font-weight: 600; }

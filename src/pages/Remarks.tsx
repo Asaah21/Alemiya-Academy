@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; full_name: string; admission_no: string }
 type Remark = { teacher: string; head: string }
@@ -56,13 +57,13 @@ export default function Remarks() {
   async function save() {
     const rows = students.map((s) => ({ student_id: s.id, teacher_remark: remarks[s.id].teacher, head_remark: remarks[s.id].head }))
     const { error } = await supabase!.rpc('save_remarks', { p_class: classId, p_term: termId, p_rows: rows })
-    if (error) return setMsg({ ok: false, text: error.message || 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setMsg({ ok: true, text: `Saved. ${filled} of ${students.length} students have a remark.` })
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Remarks</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Remarks</h1>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
         Write a short teacher remark and, if needed, a headmaster remark for each student. They are printed on the report card (up to {MAX} characters each).
       </p>

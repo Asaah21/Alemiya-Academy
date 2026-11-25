@@ -1,26 +1,79 @@
 import type { UserRole } from '../../lib/users'
 
-export type MenuItem = {
-  label: string
-  path: string
-  roles: UserRole[] // who sees this item
-  step: string // build step that fills the screen in
-}
+export type NavLink = { label: string; path: string; roles: UserRole[] }
+export type Section = { id: string; label: string; path: string; roles: UserRole[]; hint: string; links: NavLink[] }
+export type Group = { title: string; sections: Section[] }
 
-// One line per screen in the menu. Add a screen: add a line here and a <Route> in App.tsx.
-export const MENU: MenuItem[] = [
-  { label: 'Home', path: '/', roles: ['admin', 'staff'], step: '' },
-  { label: 'Students', path: '/students', roles: ['admin', 'staff'], step: 'T05' },
-  { label: 'Weekly Attendance', path: '/attendance', roles: ['admin', 'staff'], step: 'T11' },
-  { label: 'Staff Attendance', path: '/staff-attendance', roles: ['admin'], step: 'T34' },
-  { label: 'Enter Scores', path: '/scores', roles: ['admin', 'staff'], step: 'T15' },
-  { label: 'Remarks', path: '/remarks', roles: ['admin', 'staff'], step: 'T14' },
-  { label: 'Report Cards', path: '/report-cards', roles: ['admin', 'staff'], step: 'T20' },
-  { label: 'Fees', path: '/fees', roles: ['admin', 'staff'], step: 'T24' },
-  { label: 'Reports', path: '/reports', roles: ['admin'], step: 'T24' },
-  { label: 'Setup', path: '/setup', roles: ['admin'], step: 'T06' },
+const both: UserRole[] = ['admin', 'staff']
+const admin: UserRole[] = ['admin']
+
+// The whole menu in one place. A section is a tile on Home and in the side menu; its links are on its own page.
+// Add a screen: add a line to a section's links and a <Route> in App.tsx.
+export const GROUPS: Group[] = [
+  {
+    title: 'Academics',
+    sections: [
+      {
+        id: 'students', label: 'Students', path: '/hub/students', roles: both, hint: 'List, add, attendance, classes',
+        links: [
+          { label: 'Student list and totals', path: '/students', roles: both },
+          { label: 'Add a new student', path: '/students/new', roles: both },
+          { label: 'Import students from Excel', path: '/students/import', roles: admin },
+          { label: 'Weekly attendance', path: '/attendance', roles: both },
+          { label: 'Attendance summary', path: '/attendance/summary', roles: both },
+          { label: 'Classes', path: '/setup/classes', roles: admin },
+        ],
+      },
+      {
+        id: 'staff', label: 'Staff', path: '/hub/staff', roles: admin, hint: 'Add staff, daily attendance',
+        links: [
+          { label: 'Staff list and add new', path: '/setup/staff', roles: admin },
+          { label: 'Staff attendance', path: '/staff-attendance', roles: admin },
+          { label: 'Staff attendance summary', path: '/staff-attendance/summary', roles: admin },
+        ],
+      },
+      {
+        id: 'exams', label: 'Exams', path: '/hub/exams', roles: both, hint: 'Scores, remarks, report cards',
+        links: [
+          { label: 'Enter scores', path: '/scores', roles: both },
+          { label: 'Remarks', path: '/remarks', roles: both },
+          { label: 'Class results and positions', path: '/scores/results', roles: both },
+          { label: 'Report cards', path: '/report-cards', roles: both },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Administration',
+    sections: [
+      {
+        id: 'fees', label: 'Fees', path: '/hub/fees', roles: both, hint: 'Payments, balances, cash',
+        links: [
+          { label: 'Record a payment', path: '/fees', roles: both },
+          { label: 'Fee balances: owed by each student or class', path: '/fees/balances', roles: both },
+          { label: 'Daily cash', path: '/fees/cash', roles: admin },
+          { label: 'Add or change fees for each class', path: '/setup/fees', roles: admin },
+        ],
+      },
+      { id: 'reports', label: 'Reports', path: '/reports', roles: admin, hint: 'Summaries and Excel', links: [] },
+      { id: 'setup', label: 'Set up', path: '/setup', roles: admin, hint: 'Term, school info, users', links: [] },
+    ],
+  },
 ]
 
-export function menuFor(role: UserRole): MenuItem[] {
-  return MENU.filter((m) => m.roles.includes(role))
+export const sectionsFor = (role: UserRole): Group[] =>
+  GROUPS.map((g) => ({ ...g, sections: g.sections.filter((s) => s.roles.includes(role)) })).filter((g) => g.sections.length > 0)
+
+export const linksFor = (section: Section, role: UserRole): NavLink[] => section.links.filter((l) => l.roles.includes(role))
+
+export const findSection = (id: string): Section | undefined => GROUPS.flatMap((g) => g.sections).find((s) => s.id === id)
+
+/** The section a page belongs to, so the side menu can highlight it. */
+export function sectionIdFor(pathname: string): string | null {
+  for (const s of GROUPS.flatMap((g) => g.sections)) {
+    if (pathname === s.path || pathname.startsWith(s.path + '/')) return s.id
+    if (s.links.some((l) => pathname === l.path || pathname.startsWith(l.path + '/'))) return s.id
+  }
+  if (pathname.startsWith('/setup')) return 'setup'
+  return null
 }

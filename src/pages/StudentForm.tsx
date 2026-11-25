@@ -66,7 +66,7 @@ export default function StudentForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{isNew ? 'Add student' : form.full_name || 'Student'}</h1>
+      <h1 className="text-3xl font-extrabold text-brand">{isNew ? 'Add student' : form.full_name || 'Student'}</h1>
       {meta && (
         <p className="text-sm text-slate-600">
           {meta.admission_no} · {STATUS_LABELS[meta.status]}

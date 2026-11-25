@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import SnapshotView, { type SnapshotData } from '../features/termclose/SnapshotView'
 import { weekLabel } from '../lib/weeks'
 import { supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/errors'
 
 type Term = { id: string; name: string; status: 'open' | 'closed'; start_date: string; end_date: string; is_current: boolean; academic_years: { name: string } | { name: string }[] | null }
 type Check = { weeks_missing: { class_id: string; class_name: string; weeks: string[] }[]; scores_missing: { class_id: string; class_name: string; students: number; incomplete: number }[]; staff_days_missing: number }
@@ -38,7 +39,7 @@ export default function TermClose() {
     setBusy(true); setMsg(null)
     const { data, error } = await supabase!.rpc('term_close_check', { p_term: termId })
     setBusy(false)
-    if (error) return setMsg({ ok: false, text: error.message })
+    if (error) return setMsg({ ok: false, text: friendlyError(error) })
     setCheck(data as Check)
   }
 
@@ -47,7 +48,7 @@ export default function TermClose() {
     setBusy(true); setMsg(null)
     const { error } = await supabase!.rpc('close_term', { p_term: termId, p_accept_gaps: accept })
     setBusy(false)
-    if (error) return setMsg({ ok: false, text: error.message })
+    if (error) return setMsg({ ok: false, text: friendlyError(error) })
     setMsg({ ok: true, text: 'Term closed and the snapshot saved. Remember to make the next term the current term under Setup, Years and terms.' })
     setCheck(null)
     loadTerms()
@@ -59,14 +60,14 @@ export default function TermClose() {
     setBusy(true); setMsg(null)
     const { error } = await supabase!.rpc('reopen_term', { p_term: termId, p_reason: reason })
     setBusy(false)
-    if (error) return setMsg({ ok: false, text: error.message })
+    if (error) return setMsg({ ok: false, text: friendlyError(error) })
     setMsg({ ok: true, text: 'Term reopened. Make your corrections, then close it again to save a new snapshot.' })
     loadTerms()
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Close a term</h1>
+      <h1 className="text-3xl font-extrabold text-brand">Close a term</h1>
       <p className="text-sm text-slate-600">Closing saves a read-only copy of the term's numbers and locks its records. Only the Admin can close or reopen a term.</p>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
         <option value="">Choose the term</option>

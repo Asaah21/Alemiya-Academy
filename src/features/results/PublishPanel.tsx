@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import { supabase } from '../../lib/supabase'
+import { friendlyError } from '../../lib/errors'
 
 // Shows whether a class's results are published, and lets the Admin publish or take them back (rule C3).
 export default function PublishPanel({ classId, termId, complete }: { classId: string; termId: string; complete: boolean }) {
@@ -22,7 +23,7 @@ export default function PublishPanel({ classId, termId, complete }: { classId: s
     setMessage(null)
     const { error } = await supabase!.rpc(fn, { p_class: classId, p_term: termId })
     setBusy(false)
-    if (error) setMessage({ ok: false, text: error.message })
+    if (error) setMessage({ ok: false, text: friendlyError(error) })
     else setMessage({ ok: true, text: fn === 'publish_results' ? 'Results published.' : 'Results taken back.' })
     await load()
   }
