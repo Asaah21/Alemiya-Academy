@@ -59,7 +59,7 @@ export default function Turnover() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Enrolment turnover</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Enrolment turnover</h1>
         <Link to="/reports" className="text-sm underline">Reports</Link>
       </div>
       <div className="flex flex-col gap-3 print:hidden">
@@ -79,7 +79,7 @@ export default function Turnover() {
       {termId && !loading && !error && (
         <>
           <div className="hidden print:block"><h1 className="text-xl font-bold">{schoolName}: enrolment turnover</h1><p>{termName} · {gender === 'all' ? 'Boys and girls' : gender === 'male' ? 'Boys' : 'Girls'}</p></div>
-          <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
             <table className="w-full min-w-[40rem] text-sm">
               <thead className="bg-slate-100 text-right">
                 <tr>
@@ -118,10 +118,10 @@ export default function Turnover() {
           <p className="text-xs text-slate-500">Closing = opening + new + transferred in − transferred out − withdrawn − graduated. Attrition = (transferred out + withdrawn) ÷ opening × 100. Tap a class to list only its students.</p>
 
           <h2 className="font-semibold">Students behind the numbers{classId ? `: ${className.get(classId)}` : ''}</h2>
-          {names.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No movements to list.</p> : (
+          {names.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No movements to list.</p> : (
             <ul className="flex flex-col gap-2">
               {names.map((w, i) => (
-                <li key={`${w.student_id}${i}`} className="rounded-xl bg-white p-3 shadow-sm">
+                <li key={`${w.student_id}${i}`} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                   <p className="font-medium">{w.full_name} <span className="text-sm font-normal text-slate-600">({w.gender === 'male' ? 'boy' : 'girl'}, {className.get(w.class_id)})</span></p>
                   <p className="text-sm text-slate-600">{MOVEMENT_LABELS[w.movement] ?? w.movement} · {receiptDate(w.moved_on)}{w.reason ? ` · ${w.reason}` : ''}</p>
                 </li>

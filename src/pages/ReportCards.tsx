@@ -78,7 +78,7 @@ export default function ReportCards() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Report Cards</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Report Cards</h1>
         <Link to="/scores/results" className="text-sm underline">Class results</Link>
       </div>
 
@@ -96,7 +96,7 @@ export default function ReportCards() {
       </div>
 
       {data && !loading && (
-        data.cards.length === 0 ? <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm print:hidden">There are no active students in this class.</p>
+        data.cards.length === 0 ? <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm print:hidden">There are no active students in this class.</p>
         : !data.ready ? (
           <div className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900 print:hidden">
             <p className="font-medium">Report cards cannot be produced yet. {data.missing.length} score{data.missing.length === 1 ? ' is' : 's are'} missing:</p>
@@ -112,7 +112,7 @@ export default function ReportCards() {
             <ul className="flex flex-col gap-2">
               {[...data.cards].sort((a, b) => (a.position ?? 999) - (b.position ?? 999) || a.studentName.localeCompare(b.studentName)).map((c) => (
                 <li key={c.studentId}>
-                  <button onClick={() => setMode({ kind: 'one', id: c.studentId })} className="flex w-full items-center justify-between rounded-xl bg-white p-3 text-left shadow-sm">
+                  <button onClick={() => setMode({ kind: 'one', id: c.studentId })} className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm">
                     <span><span className="block font-medium">{c.studentName}</span><span className="text-sm text-slate-600">{c.admissionNo}</span></span>
                     {c.position && <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-semibold">{ordinal(c.position)}</span>}
                   </button>

@@ -97,10 +97,10 @@ export default function EnterScores() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Enter Scores</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Enter Scores</h1>
         <Link to="/scores/results" className="text-sm underline">Class results</Link>
       </div>
-      <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
         Type each student's score out of {examMax}. The grade is worked out for you. Tick Absent if the student missed the subject.
       </p>
 
@@ -122,7 +122,7 @@ export default function EnterScores() {
       {cls && !cls.scored && <p className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">{cls.name} uses remarks only on report cards. Change this under Setup, Classes if you want scores.</p>}
 
       {classId && subjectId && termId && (loading ? <p className="text-slate-600">Loading…</p> : students.length === 0 ? (
-        <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
+        <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
       ) : (
         <>
           <p className="text-sm text-slate-600">{completeCount} of {students.length} students have complete scores.</p>
@@ -133,7 +133,7 @@ export default function EnterScores() {
               const total = ck.error ? null : en.absent ? 0 : ck.score
               const g = scale.length ? gradeFor(total, scale) : null
               return (
-                <li key={s.id} className={`flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ${bad[s.id] || ck.error ? 'ring-2 ring-red-500' : ''}`}>
+                <li key={s.id} className={`flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm ${bad[s.id] || ck.error ? 'ring-2 ring-red-500' : ''}`}>
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <p className="font-medium">{s.full_name}</p>

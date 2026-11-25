@@ -84,7 +84,7 @@ export default function ParentSlips() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Parent access slips</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Parent access slips</h1>
         <p className="text-sm text-slate-600">Each parent logs in with the child's admission number and a private code printed on a slip. Give the slip to the parent in person.</p>
         <select value={classId} onChange={(e) => setClassId(e.target.value)} className={input} aria-label="Class">
           <option value="">Choose the class</option>
@@ -105,7 +105,7 @@ export default function ParentSlips() {
               {students.map((s) => {
                 const a = access.get(s.id)
                 return (
-                  <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+                  <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                     <p>
                       <span className="block font-medium">{s.full_name}</span>
                       <span className="text-xs text-slate-600">
@@ -134,7 +134,7 @@ export default function ParentSlips() {
               <p className="mt-2 text-sm"><strong>{s.full_name}</strong> · {s.class_name}</p>
               <p className="text-sm">Admission number: <strong>{s.admission_no}</strong></p>
               <p className="mt-1 text-sm">Access code:</p>
-              <p className="text-center font-mono text-3xl font-extrabold text-brand tracking-widest">{formatCode(s.code)}</p>
+              <p className="text-center font-mono text-2xl font-bold tracking-tight text-slate-900 tracking-widest">{formatCode(s.code)}</p>
               <p className="mt-1 text-xs">Go to: {origin}/parent</p>
               <p className="text-xs">Keep this code private. Do not share it.</p>
             </section>

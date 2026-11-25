@@ -52,7 +52,7 @@ export default function StaffSummary() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between print:hidden">
-        <h1 className="text-3xl font-extrabold text-brand">Staff attendance summary</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Staff attendance summary</h1>
         <Link to="/staff-attendance" className="text-sm underline">Take attendance</Link>
       </div>
 
@@ -70,14 +70,14 @@ export default function StaffSummary() {
 
       {!loading && !error && (
         rows.length === 0 ? (
-          <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No staff attendance has been saved for this term yet.</p>
+          <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No staff attendance has been saved for this term yet.</p>
         ) : (
           <>
             <div className="flex gap-2 print:hidden">
               <button onClick={() => window.print()} className="rounded-lg border border-slate-300 px-4 py-3 font-medium">Print</button>
               <button onClick={exportExcel} className="rounded-lg border border-slate-300 px-4 py-3 font-medium">Download Excel</button>
             </div>
-            <div className="overflow-x-auto rounded-xl bg-white shadow-sm print:shadow-none">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm print:shadow-none">
               <table className="w-full min-w-[34rem] text-left text-sm">
                 <thead className="bg-slate-100 print:bg-transparent">
                   <tr>{SUMMARY_HEADINGS.map((h) => <th key={h} className="p-3 font-semibold">{h}</th>)}</tr>

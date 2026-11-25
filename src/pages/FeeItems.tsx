@@ -75,7 +75,7 @@ export default function FeeItems() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Fees</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Fees</h1>
       <p className="text-sm text-slate-600">Set what each class pays in a term. Every active student in the class owes the total.</p>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
         <option value="">Choose the term</option>
@@ -90,9 +90,9 @@ export default function FeeItems() {
       {classId && termId && (
         <>
           <ul className="flex flex-col gap-2">
-            {items.length === 0 && <li className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No fees set for this class and term yet.</li>}
+            {items.length === 0 && <li className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No fees set for this class and term yet.</li>}
             {items.map((i) => (
-              <li key={i.id} className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+              <li key={i.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                 <p><span className="block font-medium">{i.name}</span><span className="text-sm text-slate-600">{formatMoney(i.amount)}</span></p>
                 <span className="flex gap-2">
                   <button onClick={() => change(i)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm">Change</button>
@@ -102,13 +102,13 @@ export default function FeeItems() {
             ))}
             {items.length > 0 && <li className="rounded-xl bg-slate-100 p-3 text-right font-bold">Total per student: {formatMoney(totalFees(items))}</li>}
           </ul>
-          <form onSubmit={add} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+          <form onSubmit={add} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="font-semibold">Add a fee</h2>
             <input placeholder="School fees" value={name} onChange={(e) => setName(e.target.value)} className={input} />
             <input placeholder="Amount in cedis, e.g. 250" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} className={input} />
             <button className="rounded-lg bg-brand p-3 font-semibold text-white">Add fee</button>
           </form>
-          <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="font-semibold">Copy from another term</h2>
             <select value={copyFrom} onChange={(e) => setCopyFrom(e.target.value)} className={input} aria-label="Copy from term">
               <option value="">Choose the term to copy from</option>

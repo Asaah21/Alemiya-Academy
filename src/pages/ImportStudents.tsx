@@ -74,11 +74,11 @@ export default function ImportStudents() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Import students</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Import students</h1>
         <Link to="/students" className="text-sm underline">Back to students</Link>
       </div>
 
-      <ol className="flex flex-col gap-2 rounded-xl bg-white p-4 text-sm shadow-sm">
+      <ol className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
         <li>1. Download the template and open it in Excel.</li>
         <li>2. Fill in one student per row. Class names must match Setup, Classes (for example Basic 3). Leave Admission number empty: it is given automatically.</li>
         <li>3. Save as Excel (.xlsx) or CSV, then choose the file below.</li>
@@ -95,7 +95,7 @@ export default function ImportStudents() {
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
 
       {check && (
-        <section className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="font-semibold">{fileName}</p>
           <p className="text-sm">{check.ready.length} students are ready. {check.errors.length} problems found.</p>
           {check.errors.length > 0 ? (

@@ -31,7 +31,7 @@ export default function PublishPanel({ classId, termId, complete }: { classId: s
   if (publishedAt === undefined) return null
   const date = publishedAt ? new Date(publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <p className="font-medium">{publishedAt ? `Published on ${date}. Parents can see these results.` : 'Not published. Parents cannot see these results yet.'}</p>
       {publishedAt && <p className="text-sm text-slate-600">Scores and remarks are locked while results are published.</p>}
       {isAdmin && (publishedAt ? (

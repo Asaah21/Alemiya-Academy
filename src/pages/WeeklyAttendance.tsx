@@ -83,8 +83,8 @@ export default function WeeklyAttendance() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Weekly Attendance</h1>
-      <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Weekly Attendance</h1>
+      <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
         Fill this in on Friday. Choose the class, then pick how many days each student was absent. Students you leave at 0 count as present every day.
       </p>
 
@@ -95,7 +95,7 @@ export default function WeeklyAttendance() {
         {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
       </select>
 
-      <div className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <button onClick={() => setWeek(addDays(week, -7))} className={btn} aria-label="Previous week">◀</button>
         <div className="text-center">
           <p className="font-semibold">{weekLabel(week)}</p>
@@ -119,7 +119,7 @@ export default function WeeklyAttendance() {
 
       {classId && (
         <>
-          <div className="flex items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
             <label className="flex items-center gap-3 text-sm font-medium">
               School days this week
               <select value={schoolDays} onChange={(e) => setSchoolDays(Number(e.target.value))} className={input}>
@@ -134,13 +134,13 @@ export default function WeeklyAttendance() {
           {loading ? (
             <p className="text-slate-600">Loading…</p>
           ) : students.length === 0 ? (
-            <p className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
+            <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {students.map((s) => {
                 const d = absent[s.id] ?? 0
                 return (
-                  <li key={s.id} className={`flex items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm ${bad.includes(s.id) ? 'ring-2 ring-red-500' : ''}`}>
+                  <li key={s.id} className={`flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm ${bad.includes(s.id) ? 'ring-2 ring-red-500' : ''}`}>
                     <div>
                       <p className="font-medium">{s.full_name}</p>
                       <p className="text-sm text-slate-600">{s.admission_no} · present {Math.max(schoolDays - d, 0)} of {schoolDays}</p>

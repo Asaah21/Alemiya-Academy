@@ -66,7 +66,7 @@ export default function StudentForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">{isNew ? 'Add student' : form.full_name || 'Student'}</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">{isNew ? 'Add student' : form.full_name || 'Student'}</h1>
       {meta && (
         <p className="text-sm text-slate-600">
           {meta.admission_no} · {STATUS_LABELS[meta.status]}
@@ -74,7 +74,7 @@ export default function StudentForm() {
       )}
       {readOnly && <p className="rounded-xl bg-slate-100 p-3 text-sm text-slate-700">Only the Admin can change student details.</p>}
       {isNew && <p className="rounded-xl bg-slate-100 p-3 text-sm text-slate-700">The admission number is given automatically when you save.</p>}
-      <form onSubmit={save} className="flex flex-col gap-4 rounded-xl bg-white p-4 shadow-sm">
+      <form onSubmit={save} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <label className={label}>Full name<input disabled={readOnly} value={form.full_name} onChange={set('full_name')} className={input} /></label>
         <label className={label}>Gender
           <select disabled={readOnly} value={form.gender} onChange={set('gender')} className={input}>

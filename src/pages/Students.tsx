@@ -36,7 +36,7 @@ export default function Students() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-brand">Students</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Students</h1>
         <div className="flex gap-2">
           {isAdmin && <Link to="/students/import" className="rounded-lg border border-slate-300 px-4 py-3 font-medium">Import</Link>}
           <Link to="/students/new" className="rounded-lg bg-brand px-4 py-3 font-semibold text-white">Add student</Link>
@@ -60,7 +60,7 @@ export default function Students() {
       <ul className="flex flex-col gap-2">
         {shown.map((s) => (
           <li key={s.id}>
-            <Link to={`/students/${s.id}`} className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+            <Link to={`/students/${s.id}`} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
               <div>
                 <p className="font-medium">{s.full_name}</p>
                 <p className="text-sm text-slate-600">{s.admission_no} · {s.class_id ? className.get(s.class_id) : 'No class'}</p>
@@ -69,7 +69,7 @@ export default function Students() {
             </Link>
           </li>
         ))}
-        {loaded && shown.length === 0 && <li className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No students found.</li>}
+        {loaded && shown.length === 0 && <li className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No students found.</li>}
       </ul>
     </div>
   )

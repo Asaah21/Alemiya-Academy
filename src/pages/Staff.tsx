@@ -56,13 +56,13 @@ export default function Staff() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Staff</h1>
-      <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Staff</h1>
+      <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
         This is the list of people who work at the school (used for daily staff attendance). To let someone log in, add them under Users as well.
       </p>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
 
-      <form onSubmit={save} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+      <form onSubmit={save} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="font-semibold">{editing ? 'Edit staff member' : 'Add a staff member'}</h2>
         <input placeholder="Full name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={input} />
         <input inputMode="tel" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={input} />
@@ -86,7 +86,7 @@ export default function Staff() {
 
       <ul className="flex flex-col gap-2">
         {shown.map((r) => (
-          <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+          <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
             <div>
               <p className="font-medium">
                 {r.full_name}

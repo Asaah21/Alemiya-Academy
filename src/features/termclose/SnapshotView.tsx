@@ -20,9 +20,9 @@ export type SnapshotData = {
 const all = { classId: '', gender: 'all' as const }
 
 function Grid({ headings, rows, total }: { headings: string[]; rows: Cell[][]; total?: Cell[] }) {
-  if (rows.length === 0) return <p className="rounded-xl bg-white p-3 text-sm text-slate-600 shadow-sm">Nothing was recorded.</p>
+  if (rows.length === 0) return <p className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-600 shadow-sm">Nothing was recorded.</p>
   return (
-    <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
       <table className="w-full min-w-[28rem] text-sm">
         <thead className="bg-slate-100"><tr>{headings.map((h, i) => <th key={h} className={`p-2 ${i === 0 ? 'text-left' : 'text-right'}`}>{h}</th>)}</tr></thead>
         <tbody>{rows.map((r, n) => <tr key={n} className="border-t border-slate-200">{r.map((v, i) => <td key={i} className={`p-2 ${i === 0 ? 'font-medium' : 'text-right'}`}>{v}</td>)}</tr>)}</tbody>
@@ -67,7 +67,7 @@ export default function SnapshotView({ data }: { data: SnapshotData }) {
           {data.classes.map((c) => {
             const list = data.students.filter((s) => s.class_id === c.id)
             return list.length === 0 ? null : (
-              <details key={c.id} className="rounded-xl bg-white p-3 shadow-sm">
+              <details key={c.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                 <summary className="cursor-pointer font-medium">{c.name} ({list.length})</summary>
                 <ol className="mt-2 list-decimal pl-6 text-sm">{list.map((s) => <li key={s.id}>{s.full_name} <span className="text-slate-500">{s.admission_no}</span></li>)}</ol>
               </details>

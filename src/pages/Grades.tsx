@@ -45,7 +45,7 @@ export default function Grades() {
   const input = 'rounded-lg border border-slate-300 p-3 text-base'
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Grading scale</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Grading scale</h1>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       {rows.length === 0 && (
         <button onClick={loadStarter} className="rounded-lg bg-brand p-3 font-semibold text-white">
@@ -57,7 +57,7 @@ export default function Grades() {
       )}
       <ul className="flex flex-col gap-2">
         {rows.map((r) => (
-          <li key={r.id} className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
+          <li key={r.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
             <p><span className="mr-2 text-lg font-bold">{r.grade}</span>{r.min_score} to {r.max_score} <span className="text-slate-600">{r.remark}</span></p>
             <div className="flex gap-2 text-sm">
               <button onClick={() => { setEditing(r.id!); setF({ min: String(r.min_score), max: String(r.max_score), grade: r.grade, remark: r.remark }) }} className="rounded-lg border border-slate-300 px-3 py-2">Edit</button>
@@ -66,7 +66,7 @@ export default function Grades() {
           </li>
         ))}
       </ul>
-      <form onSubmit={save} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+      <form onSubmit={save} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="font-semibold">{editing ? 'Edit grade' : 'Add a grade'}</h2>
         <div className="grid grid-cols-2 gap-2">
           <input inputMode="decimal" placeholder="Lowest score" value={f.min} onChange={(e) => setF({ ...f, min: e.target.value })} className={input} />

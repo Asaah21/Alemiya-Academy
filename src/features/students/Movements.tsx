@@ -54,7 +54,7 @@ export default function Movements({ studentId, status, isAdmin, onChanged }: { s
   }
 
   return (
-    <section className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+    <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <h2 className="font-semibold">History</h2>
       <ul className="flex flex-col gap-2">
         {rows.map((r) => (

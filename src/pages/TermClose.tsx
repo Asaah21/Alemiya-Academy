@@ -67,7 +67,7 @@ export default function TermClose() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Close a term</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Close a term</h1>
       <p className="text-sm text-slate-600">Closing saves a read-only copy of the term's numbers and locks its records. Only the Admin can close or reopen a term.</p>
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
         <option value="">Choose the term</option>

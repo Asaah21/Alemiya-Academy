@@ -121,7 +121,7 @@ export default function Payments() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 print:hidden">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-extrabold text-brand">Fees</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Fees</h1>
           <span className="flex gap-3 text-sm underline">
             <Link to="/fees/balances">Balances</Link>
             {isAdmin && <Link to="/fees/cash">Daily cash</Link>}
@@ -138,7 +138,7 @@ export default function Payments() {
             <ul className="flex flex-col gap-2">
               {found.map((s) => (
                 <li key={s.id}>
-                  <button onClick={() => { setStudent(s); setMsg(null) }} className="w-full rounded-xl bg-white p-3 text-left shadow-sm">
+                  <button onClick={() => { setStudent(s); setMsg(null) }} className="w-full rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm">
                     <span className="block font-medium">{s.full_name}</span>
                     <span className="text-sm text-slate-600">{s.admission_no} · {s.class_id ? className.get(s.class_id) : 'No class'}</span>
                   </button>
@@ -148,7 +148,7 @@ export default function Payments() {
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
               <p><span className="block font-semibold">{student.full_name}</span><span className="text-sm text-slate-600">{student.admission_no} · {student.class_id ? className.get(student.class_id) : 'No class'}</span></p>
               <button onClick={() => { setStudent(null); setReceipt(null); setMsg(null) }} className="rounded-lg border border-slate-300 px-3 py-2 text-sm">Change</button>
             </div>
@@ -156,12 +156,12 @@ export default function Payments() {
               {terms.map((t) => <option key={t.id} value={t.id}>{t.name}, {yearName(t)}</option>)}
             </select>
             <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Owes</p><p className="font-bold">{formatMoney(bal.owed)}</p></div>
-              <div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Paid</p><p className="font-bold">{formatMoney(bal.paid)}</p></div>
+              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Owes</p><p className="font-bold">{formatMoney(bal.owed)}</p></div>
+              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><p className="text-xs text-slate-600">Paid</p><p className="font-bold">{formatMoney(bal.paid)}</p></div>
               <div className={`rounded-xl p-3 shadow-sm ${bal.balance > 0 ? 'bg-amber-100' : 'bg-green-100'}`}><p className="text-xs text-slate-600">{bal.balance < 0 ? 'Ahead by' : 'Balance'}</p><p className="font-bold">{formatMoney(Math.abs(bal.balance))}</p></div>
             </div>
             {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
-            <form onSubmit={record} className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+            <form onSubmit={record} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <h2 className="font-semibold">Record a payment</h2>
               <input placeholder="Amount received in cedis" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} className={input} aria-label="Amount" />
               <input type="date" max={today()} value={paidOn} onChange={(e) => setPaidOn(e.target.value)} className={input} aria-label="Date of payment" />
@@ -171,9 +171,9 @@ export default function Payments() {
             <section>
               <h2 className="mb-2 font-semibold">Payments this term</h2>
               <ul className="flex flex-col gap-2">
-                {payments.length === 0 && <li className="rounded-xl bg-white p-4 text-slate-600 shadow-sm">No payments yet.</li>}
+                {payments.length === 0 && <li className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No payments yet.</li>}
                 {payments.map((p) => (
-                  <li key={p.id} className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+                  <li key={p.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                     <div>
                     <p className={p.status === 'void' ? 'text-slate-400 line-through' : ''}><span className="block font-medium">{formatMoney(p.amount)}</span><span className="text-sm">{p.receipt_no} · {receiptDate(p.paid_on)}</span></p>
                     {p.status === 'void' && p.void_reason && <p className="text-xs text-red-700">Voided: {p.void_reason}</p>}

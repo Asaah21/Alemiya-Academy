@@ -1,28 +1,18 @@
 import { Link } from 'react-router-dom'
+import { TriangleAlert } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
 import { useSchool } from '../features/school/SchoolProvider'
 
-// Shown on every screen: the school and the current term (acceptance check for T05).
+// The school and term are shown in the top bar. This only appears when no term is set, because many screens need one.
 export default function TermBadge() {
-  const { schoolName, currentTerm, loaded } = useSchool()
+  const { currentTerm, loaded } = useSchool()
   const { state } = useAuth()
   const isAdmin = state.status === 'ready' && state.profile.role === 'admin'
-  if (!loaded) return null
-
+  if (!loaded || currentTerm) return null
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm shadow-sm print:hidden">
-      {schoolName && <span className="font-semibold">{schoolName}</span>}
-      {currentTerm ? (
-        <span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">
-          {currentTerm.name}, {currentTerm.year_name}
-        </span>
-      ) : isAdmin ? (
-        <Link to="/setup/years" className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900 underline">
-          No current term: set one up
-        </Link>
-      ) : (
-        <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">No current term set</span>
-      )}
+    <div className="mb-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 print:hidden">
+      <TriangleAlert className="h-5 w-5 shrink-0" />
+      {isAdmin ? <span>No current term is set. <Link to="/setup/years" className="underline">Set one up</Link> so attendance, scores and fees can be recorded.</span> : <span>No current term is set. Ask the Admin to set one.</span>}
     </div>
   )
 }

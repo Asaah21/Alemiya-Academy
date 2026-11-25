@@ -56,7 +56,7 @@ export default function Promotion() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-extrabold text-brand">Year-end promotion</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Year-end promotion</h1>
       <p className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">
         Before you promote: close every term of the year, and print or download the report cards. After promotion each child belongs to the new class, and the old report cards will no longer show on the parents' phones.
       </p>
@@ -78,7 +78,7 @@ export default function Promotion() {
             const list = students.filter((s) => s.class_id === c.id)
             if (list.length === 0) return null
             return (
-              <section key={c.id} className="rounded-xl bg-white p-4 shadow-sm">
+              <section key={c.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                 <h2 className="font-semibold">{c.name} <span className="font-normal text-slate-600">→ {next[c.id]?.name ?? 'Graduates'}</span></h2>
                 <ul className="mt-2 flex flex-col gap-1">
                   {list.map((s) => (
