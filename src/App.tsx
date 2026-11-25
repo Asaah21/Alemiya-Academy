@@ -29,6 +29,9 @@ import SummaryReports from './pages/SummaryReports'
 import TermClose from './pages/TermClose'
 import Hub from './pages/Hub'
 import StudentsHub from './pages/StudentsHub'
+import StaffHub from './pages/StaffHub'
+import ExamsHub from './pages/ExamsHub'
+import FeesHub from './pages/FeesHub'
 import Promotion from './pages/Promotion'
 import Backup from './pages/Backup'
 import Turnover from './pages/Turnover'
@@ -47,6 +50,9 @@ export default function App() {
       <Route path="/parent/home" element={<ParentHome />} />
       <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/hub/students" element={<RequireAuth><StudentsHub /></RequireAuth>} />
+      <Route path="/hub/staff" element={<RequireAuth role="admin"><StaffHub /></RequireAuth>} />
+      <Route path="/hub/exams" element={<RequireAuth><ExamsHub /></RequireAuth>} />
+      <Route path="/hub/fees" element={<RequireAuth><FeesHub /></RequireAuth>} />
       <Route path="/hub/:id" element={<RequireAuth><Hub /></RequireAuth>} />
       <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
       <Route path="/fees" element={<RequireAuth><Payments /></RequireAuth>} />
