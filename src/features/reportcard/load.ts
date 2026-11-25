@@ -41,7 +41,7 @@ export async function loadClassCards(classId: string, termId: string): Promise<C
     school: {
       name: st?.school_name ?? '', location: st?.location ?? '', district: st?.district ?? '', region: st?.region ?? '', circuit: st?.circuit ?? '',
       logoUrl: st?.logo_url ?? null, nextTermOpening: st?.next_term_opening_date ?? null,
-      classMax: Number(st?.class_score_max ?? 30), examMax: Number(st?.exam_score_max ?? 70),
+      classMax: Number(st?.class_score_max ?? 30), examMax: Number(st?.exam_score_max ?? 100),
     },
     className: cls.data!.name,
     termName: term.data!.name,

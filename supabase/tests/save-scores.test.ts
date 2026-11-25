@@ -42,9 +42,9 @@ describe('save_scores', () => {
   })
 
   it('blocks scores above the maximum and saves nothing from that call', async () => {
-    await expect(save(id.staff, [{ student_id: id.b, class_score: 20, exam_score: 60 }, { student_id: id.a, class_score: 31, exam_score: 10 }])).rejects.toThrow(/Class score cannot be more than 30/)
+    await expect(save(id.staff, [{ student_id: id.b, class_score: 20, exam_score: 60 }, { student_id: id.a, class_score: 0, exam_score: 101 }])).rejects.toThrow(/cannot be more than 100/)
     expect(await scoreOf(id.b)).toBeUndefined()
-    await expect(save(id.staff, [{ student_id: id.b, class_score: 10, exam_score: 71 }])).rejects.toThrow(/Exam score cannot be more than 70/)
+    await expect(save(id.staff, [{ student_id: id.b, class_score: 0, exam_score: 100.5 }])).rejects.toThrow(/cannot be more than 100/)
   })
 
   it('saving again corrects a score and keeps the old value in history; unchanged rows are not logged', async () => {
@@ -73,5 +73,21 @@ describe('save_scores', () => {
     await db.exec(`insert into results_publish (class_id, term_id) values ('${id.cls}','${id.term}')`)
     await expect(save(id.staff, [{ student_id: id.a, class_score: 1, exam_score: 1 }])).rejects.toThrow(/published/)
     await db.exec(`delete from results_publish`)
+  })
+})
+
+describe('single score out of 100 (T28c)', () => {
+  it('has a maximum of 100 in the settings', async () => {
+    const { rows } = await db.query<{ exam_score_max: string }>(`select exam_score_max from settings limit 1`)
+    expect(rows.length === 0 || Number(rows[0].exam_score_max) === 100).toBe(true)
+  })
+  it('accepts a mark of 100 stored as exam score with class score 0', async () => {
+    const r = await db.query<{ id: string }>(`insert into students (full_name, gender, class_id, status) select 'Solo', 'male', class_id, 'active' from students limit 1 returning id`)
+    const sid = r.rows[0].id
+    const subj = (await db.query<{ id: string }>(`select id from subjects limit 1`)).rows[0].id
+    const term = (await db.query<{ id: string }>(`select id from terms limit 1`)).rows[0].id
+    await db.query(`insert into scores (student_id, subject_id, term_id, class_score, exam_score) values ($1, $2, $3, 0, 100)`, [sid, subj, term])
+    const t = (await db.query<{ t: string }>(`select class_score + exam_score as t from scores where student_id = $1`, [sid])).rows[0].t
+    expect(Number(t)).toBe(100)
   })
 })

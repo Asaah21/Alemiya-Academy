@@ -24,6 +24,24 @@ export function checkScore(e: ScoreEntry, classMax: number, examMax: number): Sc
   return { classScore: c.value, examScore: x.value, error: null }
 }
 
+// One mark out of the maximum (normally 100) per subject. It is stored as an exam score with a class score of 0,
+// so older rows entered as class + exam still add up to the same total.
+export type SingleCheck = { score: number | null; error: string | null }
+export function checkSingleScore(text: string, absent: boolean, max: number): SingleCheck {
+  if (absent) return { score: null, error: null }
+  const p = parseScore(text)
+  if ('error' in p) return { score: null, error: p.error }
+  if (p.value !== null && p.value > max) return { score: p.value, error: `The score cannot be more than ${max}.` }
+  return { score: p.value, error: null }
+}
+/** What to show in the single box for a saved row (older rows show class + exam). */
+export function savedMark(classScore: number | null, examScore: number | null): number | null {
+  if (classScore === null && examScore === null) return null
+  return Math.round(((classScore ?? 0) + (examScore ?? 0)) * 100) / 100
+}
+/** The values stored for one mark. */
+export const markToColumns = (score: number | null) => ({ class_score: score === null ? null : 0, exam_score: score })
+
 // Rule G2: subject total = class score + exam score. Not shown until at least one score is entered.
 // An absent student counts as 0 (rule G6). A missing half counts as 0 in the running total, but the subject is
 // "incomplete" until both are entered (rule G7, used in T13).

@@ -99,7 +99,7 @@ export default function ClassResults() {
               <div className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">
                 <p className="font-medium">Positions cannot be worked out yet. {results.missing.length} score{results.missing.length === 1 ? ' is' : 's are'} missing:</p>
                 <ul className="mt-2 list-disc pl-5">
-                  {results.missing.slice(0, 40).map((m, i) => <li key={i}>{m.name}: {m.subject} ({m.what})</li>)}
+                  {results.missing.slice(0, 40).map((m, i) => <li key={i}>{m.name}: {m.subject}</li>)}
                 </ul>
                 {results.missing.length > 40 && <p className="mt-1">…and {results.missing.length - 40} more.</p>}
               </div>

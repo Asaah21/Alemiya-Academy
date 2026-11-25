@@ -35,9 +35,7 @@ export default function ReportCard({ card }: { card: CardData }) {
           <thead>
             <tr>
               <th>Subject</th>
-              <th>Class score<br />/{s.classMax}</th>
-              <th>Exam score<br />/{s.examMax}</th>
-              <th>Total<br />/{s.classMax + s.examMax}</th>
+              <th>Score<br />/{s.examMax}</th>
               {card.showGrades && <th>Grade</th>}
               {card.showGrades && <th>Remark</th>}
             </tr>
@@ -46,8 +44,7 @@ export default function ReportCard({ card }: { card: CardData }) {
             {card.subjects.map((sub) => (
               <tr key={sub.name}>
                 <td>{sub.name}</td>
-                {sub.absent ? <td colSpan={2} className="rc-absent">Absent</td> : <><td>{dash(sub.classScore)}</td><td>{dash(sub.examScore)}</td></>}
-                <td><strong>{dash(sub.total)}</strong></td>
+                {sub.absent ? <td className="rc-absent">Absent</td> : <td><strong>{dash(sub.total)}</strong></td>}
                 {card.showGrades && <td><strong>{sub.grade}</strong></td>}
                 {card.showGrades && <td className="rc-remark">{sub.remark}</td>}
               </tr>
@@ -55,7 +52,7 @@ export default function ReportCard({ card }: { card: CardData }) {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={3}>Overall total</td>
+              <td>Overall total</td>
               <td>{dash(card.overall)}</td>
               {card.showGrades && <td colSpan={2} />}
             </tr>

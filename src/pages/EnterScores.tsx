@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
 import type { GradeRow } from '../lib/grades'
-import { checkScore, gradeFor, isComplete, subjectTotal } from '../lib/results'
+import { checkSingleScore, gradeFor, markToColumns, savedMark } from '../lib/results'
 import { supabase } from '../lib/supabase'
 import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; full_name: string; admission_no: string }
-type Entry = { classText: string; examText: string; absent: boolean }
+type Entry = { text: string; absent: boolean }
 type Term = { id: string; name: string; academic_years: { name: string } | { name: string }[] | null }
 
 const yearName = (t: Term) => (Array.isArray(t.academic_years) ? t.academic_years[0]?.name : t.academic_years?.name) ?? ''
@@ -15,7 +15,7 @@ const input = 'rounded-lg border border-slate-300 p-3 text-base'
 const show = (n: number | null) => (n === null ? '' : String(n))
 
 export default function EnterScores() {
-  const { currentTerm, classMax, examMax } = useSchool()
+  const { currentTerm, examMax } = useSchool()
   const [classes, setClasses] = useState<{ id: string; name: string; scored: boolean }[]>([])
   const [terms, setTerms] = useState<Term[]>([])
   const [scale, setScale] = useState<GradeRow[]>([])
@@ -68,7 +68,8 @@ export default function EnterScores() {
     const e: Record<string, Entry> = {}
     for (const st of (s.data as Student[]) ?? []) {
       const r = saved.get(st.id)
-      e[st.id] = { classText: show(r?.class_score === null || r?.class_score === undefined ? null : Number(r.class_score)), examText: show(r?.exam_score === null || r?.exam_score === undefined ? null : Number(r.exam_score)), absent: r?.is_absent ?? false }
+      const num = (v: unknown) => (v === null || v === undefined ? null : Number(v))
+      e[st.id] = { text: show(savedMark(num(r?.class_score), num(r?.exam_score))), absent: r?.is_absent ?? false }
     }
     setStudents((s.data as Student[]) ?? [])
     setEntries(e)
@@ -77,8 +78,8 @@ export default function EnterScores() {
   useEffect(() => { load() }, [load])
 
   const cls = classes.find((c) => c.id === classId)
-  const checks = useMemo(() => Object.fromEntries(students.map((s) => [s.id, checkScore(entries[s.id] ?? { classText: '', examText: '', absent: false }, classMax, examMax)])), [students, entries, classMax, examMax])
-  const completeCount = students.filter((s) => { const c = checks[s.id]; return c && !c.error && isComplete(c.classScore, c.examScore, entries[s.id]?.absent ?? false) }).length
+  const checks = useMemo(() => Object.fromEntries(students.map((s) => { const en = entries[s.id] ?? { text: '', absent: false }; return [s.id, checkSingleScore(en.text, en.absent, examMax)] })), [students, entries, examMax])
+  const completeCount = students.filter((s) => { const c = checks[s.id]; return c && !c.error && (c.score !== null || entries[s.id]?.absent) }).length
 
   const set = (id: string, patch: Partial<Entry>) => setEntries({ ...entries, [id]: { ...entries[id], ...patch } })
 
@@ -87,7 +88,7 @@ export default function EnterScores() {
     for (const s of students) if (checks[s.id]?.error) errs[s.id] = checks[s.id].error!
     setBad(errs)
     if (Object.keys(errs).length) return setMsg({ ok: false, text: `Fix the ${Object.keys(errs).length} marked student${Object.keys(errs).length === 1 ? '' : 's'} first. Nothing was saved.` })
-    const rows = students.map((s) => ({ student_id: s.id, class_score: checks[s.id].classScore, exam_score: checks[s.id].examScore, is_absent: entries[s.id].absent }))
+    const rows = students.map((s) => ({ student_id: s.id, ...markToColumns(checks[s.id].score), is_absent: entries[s.id].absent }))
     const { error } = await supabase!.rpc('save_scores', { p_class: classId, p_subject: subjectId, p_term: termId, p_rows: rows })
     if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
     setMsg({ ok: true, text: `Saved. ${completeCount} of ${students.length} students have complete scores.` })
@@ -100,7 +101,7 @@ export default function EnterScores() {
         <Link to="/scores/results" className="text-sm underline">Class results</Link>
       </div>
       <p className="rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
-        Type each student's class score (out of {classMax}) and exam score (out of {examMax}). The total and grade are worked out for you. Tick Absent if the student missed the subject.
+        Type each student's score out of {examMax}. The grade is worked out for you. Tick Absent if the student missed the subject.
       </p>
 
       <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
@@ -129,7 +130,7 @@ export default function EnterScores() {
             {students.map((s) => {
               const en = entries[s.id]
               const ck = checks[s.id]
-              const total = ck.error ? null : subjectTotal(ck.classScore, ck.examScore, en.absent)
+              const total = ck.error ? null : en.absent ? 0 : ck.score
               const g = scale.length ? gradeFor(total, scale) : null
               return (
                 <li key={s.id} className={`flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ${bad[s.id] || ck.error ? 'ring-2 ring-red-500' : ''}`}>
@@ -143,15 +144,12 @@ export default function EnterScores() {
                       {scale.length > 0 && <p className="text-sm text-slate-600">{g ? `${g.grade} ${g.remark}` : ''}</p>}
                     </div>
                   </div>
-                  <div className="grid grid-cols-[1fr_1fr_auto] items-end gap-2">
-                    <label className="flex flex-col text-xs text-slate-600">Class score /{classMax}
-                      <input inputMode="decimal" disabled={en.absent} value={en.classText} onChange={(e) => set(s.id, { classText: e.target.value })} className={`${input} disabled:bg-slate-100`} />
+                  <div className="grid grid-cols-[1fr_auto] items-end gap-3">
+                    <label className="flex flex-col text-sm font-bold text-slate-700">Score out of {examMax}
+                      <input inputMode="decimal" disabled={en.absent} value={en.text} onChange={(e) => set(s.id, { text: e.target.value })} className={`${input} text-lg font-bold disabled:bg-slate-100`} />
                     </label>
-                    <label className="flex flex-col text-xs text-slate-600">Exam score /{examMax}
-                      <input inputMode="decimal" disabled={en.absent} value={en.examText} onChange={(e) => set(s.id, { examText: e.target.value })} className={`${input} disabled:bg-slate-100`} />
-                    </label>
-                    <label className="flex flex-col items-center text-xs text-slate-600">Absent
-                      <input type="checkbox" checked={en.absent} onChange={(e) => set(s.id, { absent: e.target.checked })} className="mt-3 h-6 w-6" />
+                    <label className="flex flex-col items-center text-sm font-bold text-slate-700">Absent
+                      <input type="checkbox" checked={en.absent} onChange={(e) => set(s.id, { absent: e.target.checked })} className="mt-3 h-7 w-7" />
                     </label>
                   </div>
                   {(ck.error || bad[s.id]) && <p className="text-sm text-red-700">{ck.error ?? bad[s.id]}</p>}
