@@ -25,15 +25,15 @@ export default function Login() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-    <aside className="relative hidden overflow-hidden bg-gradient-to-br from-ink via-brand to-indigo-700 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+    <aside className="relative hidden overflow-hidden bg-gradient-to-br from-ink via-brand to-teal-700 p-12 text-white lg:flex lg:flex-col lg:justify-between">
       <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-white/5" />
       <div className="absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-white/5" />
       <span className="relative grid h-12 w-12 place-items-center rounded-xl bg-white/10 ring-1 ring-white/20"><GraduationCap className="h-6 w-6 text-accent" /></span>
       <div className="relative">
         <h2 className="text-4xl font-bold tracking-tight">Alemiya Academy</h2>
-        <p className="mt-3 max-w-sm text-lg font-medium text-indigo-100">Students, scores, fees and reports in one simple place.</p>
+        <p className="mt-3 max-w-sm text-lg font-medium text-teal-100">Students, scores, fees and reports in one simple place.</p>
       </div>
-      <p className="relative text-sm font-medium text-indigo-200/70">School Management System</p>
+      <p className="relative text-sm font-medium text-teal-100/70">School Management System</p>
     </aside>
     <main className="mx-auto flex w-full max-w-md flex-col justify-center gap-6 p-8">
       <div>
@@ -43,7 +43,7 @@ export default function Login() {
 
       {noProfile && (
         <p className="rounded-xl bg-amber-100 p-4 text-sm text-amber-900">
-          Your login works, but your account is not active. Please ask the Admin to set it up.
+          Your login is correct, but your account has not been switched on yet. Please ask the Admin to activate it.
           {state.status === 'no-profile' && (
             <button onClick={signOut} className="mt-2 block font-medium underline">
               Log out

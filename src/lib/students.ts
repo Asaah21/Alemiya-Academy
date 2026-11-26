@@ -1,4 +1,5 @@
 // Checks and search for the Students screens.
+import { checkBirthDate, checkName, checkOptionalPhone } from './validation'
 export type Check = { ok: true } | { ok: false; error: string }
 const fail = (error: string): Check => ({ ok: false, error })
 
@@ -13,13 +14,19 @@ export type StudentInput = {
 }
 
 export function validateStudent(s: StudentInput, today = new Date().toISOString().slice(0, 10)): Check {
-  if (s.full_name.trim().length < 2) return fail('Enter the student’s full name.')
-  if (s.gender !== 'male' && s.gender !== 'female') return fail('Choose Male or Female.')
-  if (!s.class_id) return fail('Choose the class.')
-  if (s.date_of_birth && s.date_of_birth >= today) return fail('The date of birth must be in the past.')
-  if (s.guardian_phone && !/^[0-9+\s()-]{7,20}$/.test(s.guardian_phone.trim())) {
-    return fail('The guardian phone number looks wrong. Use digits only, for example 0241234567.')
+  const n = checkName(s.full_name, 'student’s full name')
+  if (!n.ok) return fail(n.error)
+  if (s.gender !== 'male' && s.gender !== 'female') return fail('Please choose Male or Female.')
+  if (!s.class_id) return fail('Please choose the class.')
+  const d = checkBirthDate(s.date_of_birth, today)
+  if (!d.ok) return fail(d.error)
+  if (s.guardian_name.trim()) {
+    const g = checkName(s.guardian_name, 'guardian’s name')
+    if (!g.ok) return fail(g.error)
   }
+  const p = checkOptionalPhone(s.guardian_phone, 'guardian’s phone number')
+  if (!p.ok) return fail(p.error)
+  if (s.admitted_on && s.admitted_on > today) return fail('The date admitted cannot be in the future.')
   return { ok: true }
 }
 

@@ -1,5 +1,6 @@
 // Validation and helpers for creating users. Shared by the Users screen and the server function.
 
+import { checkEmail, checkName, checkOptionalPhone } from './validation'
 export type UserRole = 'admin' | 'staff'
 export const USER_ROLES: UserRole[] = ['admin', 'staff']
 export const MIN_PASSWORD_LENGTH = 8
@@ -23,18 +24,20 @@ export function validatePassword(password: unknown): Validation<string> {
 
 export function validateNewUser(input: unknown): Validation<NewUserInput> {
   const b = (input ?? {}) as Record<string, unknown>
-  const email = typeof b.email === 'string' ? b.email.trim().toLowerCase() : ''
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, error: 'Enter a valid email address.' }
-  }
-  const fullName = typeof b.full_name === 'string' ? b.full_name.trim() : ''
-  if (fullName.length < 2) return { ok: false, error: 'Enter the full name.' }
+  const e = checkEmail(typeof b.email === 'string' ? b.email : '')
+  if (!e.ok) return { ok: false, error: e.error }
+  const n = checkName(typeof b.full_name === 'string' ? b.full_name : '', 'full name')
+  if (!n.ok) return { ok: false, error: n.error }
+  const email = e.value
+  const fullName = n.value
   if (!USER_ROLES.includes(b.role as UserRole)) {
     return { ok: false, error: 'Choose Admin or Staff.' }
   }
   const pw = validatePassword(b.password)
   if (!pw.ok) return pw
-  const phone = typeof b.phone === 'string' && b.phone.trim() ? b.phone.trim() : null
+  const ph = checkOptionalPhone(typeof b.phone === 'string' ? b.phone : '')
+  if (!ph.ok) return { ok: false, error: ph.error }
+  const phone = ph.value
   return {
     ok: true,
     value: { email, full_name: fullName, role: b.role as UserRole, phone, password: pw.value },

@@ -18,6 +18,9 @@ describe('friendlyError', () => {
     expect(friendlyError({ message: 'column "foo" of relation "bar" does not exist' }, 'Could not save.')).toBe('Could not save.')
     expect(friendlyError(null)).toBe('Something went wrong. Please try again.')
   })
+  it('explains a missing database update in plain words', () => {
+    expect(friendlyError({ code: 'PGRST202', message: 'Could not find the function public.record_payment(p_amount) in the schema cache' })).toMatch(/not ready yet/)
+  })
   it('words saves the same way', () => {
     expect(saved('Scores')).toBe('Scores saved.')
   })

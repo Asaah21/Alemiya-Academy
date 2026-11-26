@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
-import { GraduationCap, LayoutDashboard, LogOut, Menu, X } from 'lucide-react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { ArrowLeft, GraduationCap, LayoutDashboard, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
 import { useSchool } from '../features/school/SchoolProvider'
 import { sectionIdFor, sectionsFor } from '../features/nav/menu'
@@ -15,6 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { schoolName, currentTerm } = useSchool()
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   if (state.status !== 'ready') return null
   const { profile } = state
   const groups = sectionsFor(profile.role)
@@ -23,7 +24,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const item = 'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-semibold transition-colors'
   const on = 'bg-white/10 text-white shadow-[inset_3px_0_0_var(--color-accent)]'
-  const off = 'text-indigo-100/80 hover:bg-white/5 hover:text-white'
+  const off = 'text-teal-100/80 hover:bg-white/5 hover:text-white'
 
   return (
     <div className="min-h-screen bg-slate-50 md:pl-64 print:pl-0">
@@ -45,7 +46,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </NavLink>
           {groups.map((g) => (
             <div key={g.title} className="mt-6">
-              <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-indigo-200/50">{g.title}</p>
+              <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-teal-100/50">{g.title}</p>
               <ul className="flex flex-col gap-0.5">
                 {g.sections.map((s) => (
                   <li key={s.id}>
@@ -64,10 +65,10 @@ export default function Layout({ children }: { children: ReactNode }) {
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-ink">{initials(profile.full_name)}</span>
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-sm font-semibold">{profile.full_name}</span>
-              <span className="block text-xs font-medium capitalize text-indigo-200/70">{profile.role}</span>
+              <span className="block text-xs font-medium capitalize text-teal-100/70">{profile.role}</span>
             </span>
           </Link>
-          <button onClick={signOut} className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-indigo-100/80 hover:bg-white/5 hover:text-white">
+          <button onClick={signOut} className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-teal-100/80 hover:bg-white/5 hover:text-white">
             <LogOut className="h-[18px] w-[18px]" /> Log out
           </button>
         </div>
@@ -86,6 +87,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       </header>
 
       <main className="mx-auto w-full max-w-[1400px] px-4 py-6 md:px-8 md:py-8 print:max-w-none print:p-0">
+        {pathname !== '/' && (
+          <button onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))} className="mb-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-bold text-slate-700 shadow-sm hover:border-brand/40 hover:text-brand print:hidden">
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
+        )}
         <TermBadge />
         <ErrorBoundary key={pathname}>{children}</ErrorBoundary>
       </main>

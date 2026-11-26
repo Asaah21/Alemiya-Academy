@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { BookOpen, GraduationCap, Phone, Plus, UserCog } from 'lucide-react'
+import { friendlyError } from '../lib/errors'
+import { checkName, checkOptionalPhone } from '../lib/validation'
 import { filterStaff, validateStaff, type StaffInput } from '../lib/staff'
 import { supabase } from '../lib/supabase'
 
@@ -14,6 +17,7 @@ export default function Staff() {
   const [editing, setEditing] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('active')
+  const [showForm, setShowForm] = useState(false)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const refresh = useCallback(async () => {
@@ -32,23 +36,27 @@ export default function Staff() {
     e.preventDefault()
     const v = validateStaff(form)
     if (!v.ok) return setMsg({ ok: false, text: v.error })
+    const nm = checkName(form.full_name, 'staff member’s name')
+    const ph = checkOptionalPhone(form.phone, 'phone number')
+    if (!nm.ok || !ph.ok) return
     const body = {
-      full_name: form.full_name.trim(), phone: form.phone.trim() || null,
+      full_name: nm.value, phone: ph.value,
       subject_notes: form.subject_notes.trim() || null, class_id: form.class_id || null,
     }
     const { error } = editing
       ? await supabase!.from('staff').update(body).eq('id', editing)
       : await supabase!.from('staff').insert(body)
-    if (error) return setMsg({ ok: false, text: 'Could not save. Please try again.' })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'The staff member could not be saved. Please try again.') })
     setMsg({ ok: true, text: editing ? 'Saved.' : `${body.full_name} added.` })
     setForm(blank)
     setEditing(null)
+    setShowForm(false)
     refresh()
   }
 
   async function setActive(r: Row, active: boolean) {
     const { error } = await supabase!.from('staff').update({ status: active ? 'active' : 'inactive' }).eq('id', r.id)
-    setMsg(error ? { ok: false, text: 'Could not save.' } : { ok: true, text: `${r.full_name} is now ${active ? 'active' : 'inactive'}.` })
+    setMsg(error ? { ok: false, text: friendlyError(error, 'The change could not be saved. Please try again.') } : { ok: true, text: `${r.full_name} is now ${active ? 'active' : 'inactive'}.` })
     refresh()
   }
 
@@ -62,10 +70,13 @@ export default function Staff() {
       </p>
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
 
-      <form onSubmit={save} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      {!showForm && (
+        <button onClick={() => { setShowForm(true); setEditing(null); setForm(blank) }} className="inline-flex items-center gap-2 self-start rounded-lg bg-brand px-5 py-3 font-bold text-white shadow-sm hover:bg-ink"><Plus className="h-5 w-5" /> Add a staff member</button>
+      )}
+      {showForm && <form onSubmit={save} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="font-semibold">{editing ? 'Edit staff member' : 'Add a staff member'}</h2>
         <input placeholder="Full name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={input} />
-        <input inputMode="tel" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={input} />
+        <input inputMode="tel" placeholder="Phone, 10 digits (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={input} />
         <input placeholder="Subject (optional)" value={form.subject_notes} onChange={(e) => setForm({ ...form, subject_notes: e.target.value })} className={input} />
         <select value={form.class_id} onChange={(e) => setForm({ ...form, class_id: e.target.value })} className={input} aria-label="Class">
           <option value="">Class (optional)</option>
@@ -73,9 +84,9 @@ export default function Staff() {
         </select>
         <div className="flex gap-2">
           <button className="flex-1 rounded-lg bg-brand p-3 font-semibold text-white">{editing ? 'Save changes' : 'Add staff member'}</button>
-          {editing && <button type="button" onClick={() => { setEditing(null); setForm(blank) }} className="rounded-lg border border-slate-300 px-4">Cancel</button>}
+          {editing && <button type="button" onClick={() => { setEditing(null); setForm(blank); setShowForm(false) }} className="rounded-lg border border-slate-300 px-4">Cancel</button>}
         </div>
-      </form>
+      </form>}
 
       <input type="search" placeholder="Search name, phone or subject" value={search} onChange={(e) => setSearch(e.target.value)} className={input} />
       <select value={status} onChange={(e) => setStatus(e.target.value)} className={input} aria-label="Status">
@@ -84,21 +95,25 @@ export default function Staff() {
         <option value="">All</option>
       </select>
 
-      <ul className="flex flex-col gap-2">
+      <p className="text-sm font-bold text-slate-500">{shown.length} {shown.length === 1 ? 'person' : 'people'} shown</p>
+      <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {shown.map((r) => (
-          <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-            <div>
-              <p className="font-medium">
-                {r.full_name}
-                {r.status === 'inactive' && <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs">Inactive</span>}
-              </p>
-              <p className="text-sm text-slate-600">{[r.subject_notes, className(r.class_id), r.phone].filter(Boolean).join(' · ') || 'No details yet'}</p>
+          <li key={r.id} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand/10 text-brand"><UserCog className="h-5 w-5" /></span>
+              <div className="min-w-0">
+                <p className="truncate text-lg font-bold text-slate-900">{r.full_name}</p>
+                <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${r.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-slate-200 text-slate-700'}`}>{r.status === 'active' ? 'Active' : 'Inactive'}</span>
+              </div>
             </div>
-            <div className="flex gap-2 text-sm">
-              <button onClick={() => { setEditing(r.id); setForm({ full_name: r.full_name, phone: r.phone ?? '', subject_notes: r.subject_notes ?? '', class_id: r.class_id ?? '' }); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="rounded-lg border border-slate-300 px-3 py-2">Edit</button>
-              <button onClick={() => setActive(r, r.status !== 'active')} className="rounded-lg border border-slate-300 px-3 py-2">
-                {r.status === 'active' ? 'Deactivate' : 'Activate'}
-              </button>
+            <dl className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+              <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" />{r.phone || <span className="text-slate-400">No phone number</span>}</div>
+              <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-slate-400" />{r.subject_notes || <span className="text-slate-400">No subject</span>}</div>
+              <div className="flex items-center gap-2"><GraduationCap className="h-4 w-4 text-slate-400" />{className(r.class_id) || <span className="text-slate-400">No class</span>}</div>
+            </dl>
+            <div className="mt-auto flex gap-2 text-sm font-bold">
+              <button onClick={() => { setEditing(r.id); setShowForm(true); setForm({ full_name: r.full_name, phone: r.phone ?? '', subject_notes: r.subject_notes ?? '', class_id: r.class_id ?? '' }); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="rounded-lg border border-slate-300 px-3 py-2 hover:border-brand/40">Edit</button>
+              <button onClick={() => setActive(r, r.status !== 'active')} className="rounded-lg border border-slate-300 px-3 py-2 hover:border-brand/40">{r.status === 'active' ? 'Deactivate' : 'Activate'}</button>
             </div>
           </li>
         ))}

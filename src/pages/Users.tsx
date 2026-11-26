@@ -70,7 +70,7 @@ export default function Users() {
         <h2 className="font-semibold">Add a user</h2>
         <input required placeholder="Full name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={input} />
         <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={input} />
-        <input placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={input} />
+        <input placeholder="Phone, 10 digits (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={input} />
         <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as UserRole })} className={input}>
           <option value="staff">Staff</option>
           <option value="admin">Admin</option>
