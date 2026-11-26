@@ -1,4 +1,4 @@
-import { BarChart3, Banknote, Bell, ClipboardCheck, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
+import { BarChart3, Banknote, Bell, CalendarDays, ClipboardCheck, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
 import type { UserRole } from '../../lib/users'
 
 export type NavLink = { label: string; path: string; roles: UserRole[] }
@@ -41,6 +41,7 @@ export const GROUPS: Group[] = [
           { label: 'Report cards', path: '/report-cards', roles: both },
         ],
       },
+      { icon: CalendarDays, id: 'timetable', label: 'Timetable', path: '/timetable', roles: both, hint: 'Term timetable document', links: [] },
     ],
   },
   {

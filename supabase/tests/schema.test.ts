@@ -8,7 +8,7 @@ const ALL_TABLES = [
   'settings', 'academic_years', 'terms', 'classes', 'subjects', 'class_subjects', 'grade_scale',
   'profiles', 'staff', 'students', 'student_movements', 'parent_access', 'attendance_weeks',
   'attendance_entries', 'staff_attendance', 'non_school_days', 'scores', 'report_remarks',
-  'results_publish', 'fee_items', 'payments', 'term_snapshots', 'history', 'notices',
+  'results_publish', 'fee_items', 'payments', 'term_snapshots', 'history', 'notices', 'timetables',
 ]
 
 let db: PGlite
@@ -53,6 +53,7 @@ beforeAll(async () => {
     values ($1, $2, 50, 'R-2025-0001') returning id`, [ids.student, ids.term])
   await db.exec(`insert into term_snapshots (term_id, data) values ('${ids.term}', '{}')`)
   await db.exec(`insert into notices (title, body) values ('Welcome', 'First notice')`)
+  await db.exec(`insert into timetables (term_id, file_path, file_name) values ('${ids.term}', 'a/1-t.pdf', 't.pdf')`)
 })
 
 describe('T02 tables', () => {
