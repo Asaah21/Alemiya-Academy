@@ -1,4 +1,4 @@
-import { BarChart3, Banknote, ClipboardCheck, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
+import { BarChart3, Banknote, Bell, CalendarDays, ClipboardCheck, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
 import type { UserRole } from '../../lib/users'
 
 export type NavLink = { label: string; path: string; roles: UserRole[] }
@@ -41,6 +41,7 @@ export const GROUPS: Group[] = [
           { label: 'Report cards', path: '/report-cards', roles: both },
         ],
       },
+      { icon: CalendarDays, id: 'timetable', label: 'Timetable', path: '/timetable', roles: both, hint: 'Term timetable document', links: [] },
     ],
   },
   {
@@ -55,6 +56,7 @@ export const GROUPS: Group[] = [
           { label: 'Add or change fees for each class', path: '/setup/fees', roles: admin },
         ],
       },
+      { icon: Bell, id: 'notices', label: 'Notices', path: '/notices', roles: both, hint: 'Messages for staff and parents', links: [] },
       { icon: BarChart3, id: 'reports', label: 'Reports', path: '/reports', roles: admin, hint: 'Summaries and Excel', links: [] },
       { icon: Settings, id: 'setup', label: 'Set up', path: '/setup', roles: admin, hint: 'Term, school info, users', links: [] },
     ],

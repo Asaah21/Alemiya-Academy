@@ -4,12 +4,13 @@ import { useAuth } from '../features/auth/AuthProvider'
 import { downloadPdf } from '../features/reportcard/pdf'
 import ReportCard from '../features/reportcard/ReportCard'
 import { formatMoney } from '../lib/fees'
+import { noticeDate } from '../lib/notices'
 import { cardFromParentReport, type ParentReport } from '../lib/parent-view'
 import { receiptDate } from '../lib/payments'
 import type { CardData } from '../lib/report-card'
 import { supabase } from '../lib/supabase'
 
-type Tab = 'results' | 'fees' | 'attendance'
+type Tab = 'results' | 'fees' | 'attendance' | 'notices'
 type ResultTerm = { term_id: string; term_name: string; year_name: string }
 type FeeTerm = { term_id: string; term_name: string; year_name: string; owed: number; paid: number; balance: number }
 type Fees = { terms: FeeTerm[]; payments: { receipt_no: string; amount: number; paid_on: string; term_name: string }[] }
@@ -125,6 +126,30 @@ function FeesTab() {
   )
 }
 
+type ParentNotice = { id: string; title: string; body: string; created_at: string; posted_by_name: string | null }
+
+function NoticesTab() {
+  const [rows, setRows] = useState<ParentNotice[] | null>(null)
+  const [error, setError] = useState(false)
+  useEffect(() => {
+    supabase!.rpc('parent_notices').then(({ data, error: e }) => (e ? setError(true) : setRows((data ?? []) as ParentNotice[])))
+  }, [])
+  if (error) return <p className="rounded-xl bg-red-100 p-4 text-sm text-red-800">Something went wrong. Please try again.</p>
+  if (!rows) return <p className="text-slate-600">Loading…</p>
+  if (rows.length === 0) return <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no notices from the school right now.</p>
+  return (
+    <ul className="flex flex-col gap-3">
+      {rows.map((n) => (
+        <li key={n.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="font-bold text-slate-900">{n.title}</p>
+          <p className="mt-1 whitespace-pre-wrap text-slate-700">{n.body}</p>
+          <p className="mt-2 text-xs font-semibold text-slate-500">{n.posted_by_name || 'School'} · {noticeDate(n.created_at)}</p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function AttendanceTab() {
   const [rows, setRows] = useState<Att[] | null>(null)
   const [error, setError] = useState(false)
@@ -170,10 +195,12 @@ export default function ParentHome() {
         <button onClick={() => setTab('results')} className={tabBtn(tab === 'results')}>Report card</button>
         <button onClick={() => setTab('fees')} className={tabBtn(tab === 'fees')}>Fees</button>
         <button onClick={() => setTab('attendance')} className={tabBtn(tab === 'attendance')}>Attendance</button>
+        <button onClick={() => setTab('notices')} className={tabBtn(tab === 'notices')}>Notices</button>
       </nav>
       {tab === 'results' && <Results />}
       {tab === 'fees' && <FeesTab />}
       {tab === 'attendance' && <AttendanceTab />}
+      {tab === 'notices' && <NoticesTab />}
     </main>
   )
 }
