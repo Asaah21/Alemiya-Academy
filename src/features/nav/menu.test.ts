@@ -6,10 +6,10 @@ const labels = (role: 'admin' | 'staff') => sectionsFor(role).flatMap((g) => g.s
 describe('menu', () => {
   it('shows Admin every section in two groups', () => {
     expect(sectionsFor('admin').map((g) => g.title)).toEqual(['Academics', 'Administration'])
-    expect(labels('admin')).toEqual(['Students', 'Staff', 'Exams', 'Fees', 'Reports', 'Set up'])
+    expect(labels('admin')).toEqual(['Students', 'Staff', 'Exams', 'Fees', 'Notices', 'Reports', 'Set up'])
   })
   it('hides Admin-only sections from Staff', () => {
-    expect(labels('staff')).toEqual(['Students', 'Exams', 'Fees'])
+    expect(labels('staff')).toEqual(['Students', 'Exams', 'Fees', 'Notices'])
   })
   it('hides Admin-only links inside a section from Staff', () => {
     const fees = findSection('fees')!

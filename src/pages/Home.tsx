@@ -1,16 +1,18 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Banknote, ChevronRight, ClipboardCheck, FileText, GraduationCap, Landmark, MapPin, Receipt, UserCog, UserPlus, Users, Wallet, type LucideIcon } from 'lucide-react'
+import { Banknote, Bell, ChevronRight, ClipboardCheck, FileText, GraduationCap, Landmark, MapPin, Receipt, UserCog, UserPlus, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
 import { balanceTotals, type BalanceRow } from '../lib/balances'
 import { fetchAll } from '../lib/backup'
 import { formatMoney } from '../lib/fees'
 import { cashTotal } from '../lib/home'
+import { noticeDate } from '../lib/notices'
 import { supabase } from '../lib/supabase'
 
 type School = { school_name: string | null; location: string | null; district: string | null; region: string | null; circuit: string | null }
 type ClassCount = { id: string; name: string; count: number }
-type Numbers = { students: number; classes: number; staff: number | null; cash: number | null; due: number | null; byClass: ClassCount[]; school: School | null }
+type HomeNotice = { id: string; title: string; body: string; audience: string; created_at: string; posted_by_name: string | null }
+type Numbers = { notices: HomeNotice[]; students: number; classes: number; staff: number | null; cash: number | null; due: number | null; byClass: ClassCount[]; school: School | null }
 
 function Stat({ icon: Icon, label, value, to, className = '' }: { icon: LucideIcon; label: string; value: ReactNode; to?: string; className?: string }) {
   const body = (
@@ -34,11 +36,12 @@ export default function Home() {
     if (state.status !== 'ready') return
     const today = new Date().toISOString().slice(0, 10)
     ;(async () => {
-      const [stu, classes, term, school] = await Promise.all([
+      const [stu, classes, term, school, notices] = await Promise.all([
         fetchAll((from, to) => supabase!.from('students').select('class_id').eq('status', 'active').range(from, to)),
         supabase!.from('classes').select('id, name').order('level_order'),
         supabase!.from('terms').select('id').eq('is_current', true).maybeSingle(),
         supabase!.from('settings').select('school_name, location, district, region, circuit').maybeSingle(),
+        supabase!.from('notices').select('id, title, body, audience, created_at, posted_by_name').eq('archived', false).order('created_at', { ascending: false }).limit(3),
       ])
       const counts = new Map<string, number>()
       for (const s of stu) counts.set(s.class_id as string, (counts.get(s.class_id as string) ?? 0) + 1)
@@ -58,7 +61,7 @@ export default function Home() {
           due = balanceTotals((bal.data ?? []) as BalanceRow[]).due
         }
       }
-      setN({ students: stu.length, classes: cls.length, staff, cash, due, byClass: cls.map((c) => ({ ...c, count: counts.get(c.id) ?? 0 })), school: (school.data as School | null) ?? null })
+      setN({ notices: (notices.data ?? []) as HomeNotice[], students: stu.length, classes: cls.length, staff, cash, due, byClass: cls.map((c) => ({ ...c, count: counts.get(c.id) ?? 0 })), school: (school.data as School | null) ?? null })
     })()
   }, [state.status, isAdmin])
 
@@ -96,6 +99,28 @@ export default function Home() {
         {isAdmin && <Stat icon={UserCog} label="Staff" value={n?.staff ?? '–'} to="/setup/staff" className="col-span-2 lg:col-span-2" />}
         {isAdmin && <Stat icon={Banknote} label="Cash received today" value={n?.cash == null ? '–' : formatMoney(n.cash)} to="/fees/cash" className="col-span-2 lg:col-span-3" />}
         {isAdmin && <Stat icon={Wallet} label="Fees still owed this term" value={n?.due == null ? '–' : formatMoney(n.due)} to="/fees/balances" className="col-span-2 lg:col-span-3" />}
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <h2 className="text-base font-bold text-slate-900">Recent notices</h2>
+          <Link to="/notices" className="text-sm font-bold text-brand hover:underline">View all</Link>
+        </div>
+        {!n ? <p className="p-5 text-sm font-medium text-slate-500">Loading…</p> : n.notices.length === 0 ? (
+          <p className="flex items-center gap-3 p-5 text-sm font-medium text-slate-500"><Bell className="h-5 w-5 text-slate-300" /> No notices yet. <Link to="/notices" className="font-bold text-brand hover:underline">Post one</Link></p>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {n.notices.map((x) => (
+              <li key={x.id} className="px-5 py-3.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="font-bold text-slate-900">{x.title}</p>
+                  <p className="shrink-0 text-xs font-semibold text-slate-500">{noticeDate(x.created_at)}</p>
+                </div>
+                <p className="mt-0.5 line-clamp-2 text-sm font-medium text-slate-600">{x.body}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <div className="grid gap-6 lg:grid-cols-5">
