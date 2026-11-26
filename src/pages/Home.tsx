@@ -81,14 +81,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-ink via-brand to-indigo-700 px-6 py-7 text-white shadow-sm md:px-8">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-ink via-brand to-teal-700 px-6 py-7 text-white shadow-sm md:px-8">
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 right-24 h-40 w-40 rounded-full bg-white/5" />
         <div className="relative flex items-start gap-4">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/10 ring-1 ring-white/20"><Landmark className="h-6 w-6 text-accent" /></span>
           <div>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{n?.school?.school_name || 'Alemiya Academy'}</h1>
-            {place.length > 0 && <p className="mt-1 flex items-center gap-1.5 text-sm font-medium text-indigo-100"><MapPin className="h-4 w-4 shrink-0" /> {place.join(' · ')}</p>}
+            {place.length > 0 && <p className="mt-1 flex items-center gap-1.5 text-sm font-medium text-teal-100"><MapPin className="h-4 w-4 shrink-0" /> {place.join(' · ')}</p>}
           </div>
         </div>
       </section>

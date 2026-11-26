@@ -41,7 +41,7 @@ export default function Timetable() {
 
   useEffect(() => {
     setPreview(null)
-    if (current && isImage(current.content_type)) {
+    if (current && (isImage(current.content_type) || current.content_type === 'application/pdf')) {
       supabase!.storage.from('timetables').createSignedUrl(current.file_path, 3600).then(({ data }) => setPreview(data?.signedUrl ?? null))
     }
   }, [current?.id, current?.file_path, current?.content_type])
@@ -78,7 +78,7 @@ export default function Timetable() {
       {msg && <p className={`rounded-xl border p-4 text-sm font-semibold ${msg.ok ? 'border-green-200 bg-green-50 text-green-900' : 'border-red-200 bg-red-50 text-red-800'}`}>{msg.text}</p>}
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <section className="rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-3">
+        <section className="rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-5">
           <h2 className="border-b border-slate-100 px-5 py-4 text-base font-bold text-slate-900">This term's timetable</h2>
           {rows === null ? <p className="p-5 text-sm font-medium text-slate-500">Loading…</p> : !current ? (
             <div className="p-8 text-center">
@@ -99,13 +99,16 @@ export default function Timetable() {
                 <button onClick={() => open(current, false)} className="flex items-center gap-2 rounded-lg bg-brand px-4 py-3 font-bold text-white shadow-sm hover:bg-ink"><ExternalLink className="h-4 w-4" /> View</button>
                 <button onClick={() => open(current, true)} className="flex items-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-3 font-bold text-slate-700"><Download className="h-4 w-4" /> Download</button>
               </div>
-              {preview && <img src={preview} alt="Timetable" className="w-full rounded-lg border border-slate-200" />}
+              {preview && (isImage(current.content_type)
+                ? <img src={preview} alt="Timetable" className="w-full rounded-lg border border-slate-200" />
+                : <iframe src={preview} title="Timetable" className="h-[85vh] w-full rounded-lg border border-slate-200" />)}
+              {!preview && !isImage(current.content_type) && current.content_type !== 'application/pdf' && <p className="rounded-lg bg-slate-50 p-3 text-sm font-medium text-slate-600">This kind of file cannot be shown here. Press View or Download to open it.</p>}
             </div>
           )}
         </section>
 
         {isAdmin && (
-          <form onSubmit={upload} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:self-start">
+          <form onSubmit={upload} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-5">
             <h2 className="flex items-center gap-2 text-base font-bold text-slate-900"><Upload className="h-5 w-5 text-brand" /> {current ? 'Replace the timetable' : 'Upload the timetable'}</h2>
             <p className="text-sm font-medium text-slate-500">A PDF, picture or Word file, up to 10 MB. {current ? 'The new file replaces the one above; the old file is kept safely.' : ''}</p>
             <input ref={fileInput} type="file" accept={ACCEPT} onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="w-full rounded-lg border border-slate-300 bg-white p-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:font-bold" />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from 'react'
 import { useSchool } from '../features/school/SchoolProvider'
 import type { GradeRow } from '../lib/grades'
 import { checkSingleScore, gradeFor, markToColumns, savedMark } from '../lib/results'
@@ -8,21 +8,18 @@ import { friendlyError } from '../lib/errors'
 
 type Student = { id: string; full_name: string; admission_no: string }
 type Entry = { text: string; absent: boolean }
-type Term = { id: string; name: string; academic_years: { name: string } | { name: string }[] | null }
-
-const yearName = (t: Term) => (Array.isArray(t.academic_years) ? t.academic_years[0]?.name : t.academic_years?.name) ?? ''
 const input = 'rounded-lg border border-slate-300 p-3 text-base'
 const show = (n: number | null) => (n === null ? '' : String(n))
 
 export default function EnterScores() {
   const { currentTerm, examMax } = useSchool()
   const [classes, setClasses] = useState<{ id: string; name: string; scored: boolean }[]>([])
-  const [terms, setTerms] = useState<Term[]>([])
   const [scale, setScale] = useState<GradeRow[]>([])
   const [classId, setClassId] = useState('')
   const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([])
   const [subjectId, setSubjectId] = useState('')
-  const [termId, setTermId] = useState('')
+  const [doneBy, setDoneBy] = useState<Record<string, Set<string>>>({})
+  const [showAll, setShowAll] = useState(false)
   const [students, setStudents] = useState<Student[]>([])
   const [entries, setEntries] = useState<Record<string, Entry>>({})
   const [bad, setBad] = useState<Record<string, string>>({})
@@ -32,15 +29,13 @@ export default function EnterScores() {
   useEffect(() => {
     Promise.all([
       supabase!.from('classes').select('id, name, scored').order('level_order'),
-      supabase!.from('terms').select('id, name, academic_years(name)').order('start_date', { ascending: false }),
       supabase!.from('grade_scale').select('min_score, max_score, grade, remark'),
-    ]).then(([c, t, g]) => {
+    ]).then(([c, g]) => {
       setClasses(c.data ?? [])
-      setTerms((t.data as unknown as Term[]) ?? [])
       setScale(((g.data ?? []) as GradeRow[]).map((r) => ({ ...r, min_score: Number(r.min_score), max_score: Number(r.max_score), remark: r.remark ?? '' })))
     })
   }, [])
-  useEffect(() => { if (!termId && currentTerm) setTermId(currentTerm.id) }, [currentTerm, termId])
+  const termId = currentTerm?.id ?? ''
 
   useEffect(() => {
     setSubjectId('')
@@ -58,40 +53,68 @@ export default function EnterScores() {
   const load = useCallback(async () => {
     if (!classId || !subjectId || !termId) return setStudents([])
     setLoading(true)
-    setMsg(null)
     setBad({})
-    const [s, sc] = await Promise.all([
-      supabase!.from('students').select('id, full_name, admission_no').eq('class_id', classId).eq('status', 'active').order('full_name'),
-      supabase!.from('scores').select('student_id, class_score, exam_score, is_absent').eq('subject_id', subjectId).eq('term_id', termId),
-    ])
-    const saved = new Map((sc.data ?? []).map((r) => [r.student_id as string, r]))
+    const { data: st } = await supabase!.from('students').select('id, full_name, admission_no').eq('class_id', classId).eq('status', 'active').order('full_name')
+    const list = (st as Student[]) ?? []
+    const ids = list.map((x) => x.id)
+    const { data: sc } = ids.length
+      ? await supabase!.from('scores').select('student_id, subject_id, class_score, exam_score, is_absent').eq('term_id', termId).in('student_id', ids)
+      : { data: [] as { student_id: string; subject_id: string; class_score: unknown; exam_score: unknown; is_absent: boolean }[] }
+    const done: Record<string, Set<string>> = {}
+    for (const r of sc ?? []) (done[r.subject_id as string] ??= new Set()).add(r.student_id as string)
     const e: Record<string, Entry> = {}
-    for (const st of (s.data as Student[]) ?? []) {
-      const r = saved.get(st.id)
-      const num = (v: unknown) => (v === null || v === undefined ? null : Number(v))
-      e[st.id] = { text: show(savedMark(num(r?.class_score), num(r?.exam_score))), absent: r?.is_absent ?? false }
+    const num = (v: unknown) => (v === null || v === undefined ? null : Number(v))
+    for (const x of list) {
+      const r = (sc ?? []).find((y) => y.student_id === x.id && y.subject_id === subjectId)
+      e[x.id] = { text: show(savedMark(num(r?.class_score), num(r?.exam_score))), absent: r?.is_absent ?? false }
     }
-    setStudents((s.data as Student[]) ?? [])
+    setStudents(list)
+    setDoneBy(done)
     setEntries(e)
     setLoading(false)
   }, [classId, subjectId, termId])
-  useEffect(() => { load() }, [load])
+  useEffect(() => { setShowAll(false); load() }, [load])
 
   const cls = classes.find((c) => c.id === classId)
+  const doneHere = doneBy[subjectId] ?? new Set<string>()
+  const pending = students.filter((x) => !doneHere.has(x.id))
+  const visible = showAll ? students : pending
+  const pendingFor = (sid: string) => students.filter((x) => !(doneBy[sid]?.has(x.id))).length
   const checks = useMemo(() => Object.fromEntries(students.map((s) => { const en = entries[s.id] ?? { text: '', absent: false }; return [s.id, checkSingleScore(en.text, en.absent, examMax)] })), [students, entries, examMax])
-  const completeCount = students.filter((s) => { const c = checks[s.id]; return c && !c.error && (c.score !== null || entries[s.id]?.absent) }).length
 
   const set = (id: string, patch: Partial<Entry>) => setEntries({ ...entries, [id]: { ...entries[id], ...patch } })
 
   async function save() {
     const errs: Record<string, string> = {}
-    for (const s of students) if (checks[s.id]?.error) errs[s.id] = checks[s.id].error!
+    for (const x of visible) if (checks[x.id]?.error) errs[x.id] = checks[x.id].error!
     setBad(errs)
-    if (Object.keys(errs).length) return setMsg({ ok: false, text: `Fix the ${Object.keys(errs).length} marked student${Object.keys(errs).length === 1 ? '' : 's'} first. Nothing was saved.` })
-    const rows = students.map((s) => ({ student_id: s.id, ...markToColumns(checks[s.id].score), is_absent: entries[s.id].absent }))
+    if (Object.keys(errs).length) return setMsg({ ok: false, text: `Please fix the ${Object.keys(errs).length} student${Object.keys(errs).length === 1 ? '' : 's'} marked in red. Nothing was saved.` })
+    const entered = visible.filter((x) => checks[x.id].score !== null || entries[x.id].absent)
+    if (entered.length === 0) return setMsg({ ok: false, text: 'You have not typed any score yet.' })
+    const rows = entered.map((x) => ({ student_id: x.id, ...markToColumns(checks[x.id].score), is_absent: entries[x.id].absent }))
     const { error } = await supabase!.rpc('save_scores', { p_class: classId, p_subject: subjectId, p_term: termId, p_rows: rows })
-    if (error) return setMsg({ ok: false, text: friendlyError(error, 'Could not save. Please try again.') })
-    setMsg({ ok: true, text: `Saved. ${completeCount} of ${students.length} students have complete scores.` })
+    if (error) return setMsg({ ok: false, text: friendlyError(error, 'The scores could not be saved. Please try again.') })
+    // Move on: if this subject is finished, go to the next subject that still has students waiting.
+    const left = pending.length - entered.filter((x) => !doneHere.has(x.id)).length
+    const idx = subjects.findIndex((x) => x.id === subjectId)
+    const order = [...subjects.slice(idx + 1), ...subjects.slice(0, idx)]
+    if (left <= 0 && !showAll) {
+      const next = order.find((x) => pendingFor(x.id) > 0)
+      if (next) { setSubjectId(next.id); setMsg({ ok: true, text: `Saved. ${subjects[idx]?.name} is finished. Now enter ${next.name}.` }); window.scrollTo({ top: 0, behavior: 'smooth' }); return }
+      setMsg({ ok: true, text: `Saved. All subjects for ${cls?.name} are finished.` })
+    } else {
+      setMsg({ ok: true, text: `Saved ${entered.length} score${entered.length === 1 ? '' : 's'}.` })
+    }
+    await load()
+  }
+
+  // Pressing Enter in a score box jumps to the next student's box.
+  function nextBox(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const boxes = Array.from(document.querySelectorAll<HTMLInputElement>('input[data-score]:not(:disabled)'))
+    const i = boxes.indexOf(e.currentTarget)
+    boxes[i + 1]?.focus()
   }
 
   return (
@@ -104,18 +127,17 @@ export default function EnterScores() {
         Type each student's score out of {examMax}. The grade is worked out for you. Tick Absent if the student missed the subject.
       </p>
 
-      <select value={termId} onChange={(e) => setTermId(e.target.value)} className={input} aria-label="Term">
-        <option value="">Choose the term</option>
-        {terms.map((t) => <option key={t.id} value={t.id}>{t.name}, {yearName(t)}</option>)}
-      </select>
-      <select value={classId} onChange={(e) => setClassId(e.target.value)} className={input} aria-label="Class">
+      {currentTerm
+        ? <p className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 shadow-sm">Term: {currentTerm.name}, {currentTerm.year_name}</p>
+        : <p className="rounded-xl bg-amber-100 p-4 text-sm font-semibold text-amber-900">No current term is set yet. Ask the Admin to set it first (Set up, then Current term).</p>}
+      <select value={classId} onChange={(e) => { setClassId(e.target.value); setMsg(null) }} className={input} aria-label="Class">
         <option value="">Choose the class</option>
         {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
       </select>
       {classId && (
-        <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} className={input} aria-label="Subject">
+        <select value={subjectId} onChange={(e) => { setSubjectId(e.target.value); setMsg(null) }} className={input} aria-label="Subject">
           <option value="">{subjects.length ? 'Choose the subject' : 'No subjects set for this class'}</option>
-          {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}{doneBy[s.id] ? ` (${pendingFor(s.id)} waiting)` : ''}</option>)}
         </select>
       )}
 
@@ -125,9 +147,13 @@ export default function EnterScores() {
         <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">There are no active students in this class.</p>
       ) : (
         <>
-          <p className="text-sm text-slate-600">{completeCount} of {students.length} students have complete scores.</p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-bold text-slate-600">{showAll ? `All ${students.length} students` : `${pending.length} of ${students.length} students still waiting for a score`}</p>
+            <button onClick={() => setShowAll(!showAll)} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700">{showAll ? 'Show only students waiting' : 'Show all students (to correct a score)'}</button>
+          </div>
+          {visible.length === 0 && <p className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-bold text-green-900">Every student in this class has a score for this subject. Choose another subject, or show all students to correct a score.</p>}
           <ul className="flex flex-col gap-2">
-            {students.map((s) => {
+            {visible.map((s) => {
               const en = entries[s.id]
               const ck = checks[s.id]
               const total = ck.error ? null : en.absent ? 0 : ck.score
@@ -146,7 +172,7 @@ export default function EnterScores() {
                   </div>
                   <div className="grid grid-cols-[1fr_auto] items-end gap-3">
                     <label className="flex flex-col text-sm font-bold text-slate-700">Score out of {examMax}
-                      <input inputMode="decimal" disabled={en.absent} value={en.text} onChange={(e) => set(s.id, { text: e.target.value })} className={`${input} text-lg font-bold disabled:bg-slate-100`} />
+                      <input data-score onKeyDown={nextBox} enterKeyHint="next" inputMode="decimal" disabled={en.absent} value={en.text} onChange={(e) => set(s.id, { text: e.target.value })} className={`${input} text-lg font-bold disabled:bg-slate-100`} />
                     </label>
                     <label className="flex flex-col items-center text-sm font-bold text-slate-700">Absent
                       <input type="checkbox" checked={en.absent} onChange={(e) => set(s.id, { absent: e.target.checked })} className="mt-3 h-7 w-7" />
@@ -157,8 +183,8 @@ export default function EnterScores() {
               )
             })}
           </ul>
-          {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
-          <button onClick={save} className="sticky bottom-3 rounded-lg bg-brand p-4 text-base font-semibold text-white shadow-lg">Save scores</button>
+          {msg && <p className={`rounded-xl p-4 text-sm font-semibold ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
+          <button onClick={save} disabled={visible.length === 0} className="sticky bottom-3 rounded-lg bg-brand p-4 disabled:opacity-50 text-base font-semibold text-white shadow-lg">Save scores</button>
         </>
       ))}
       {msg && !msg.ok && students.length === 0 && <p className="rounded-xl bg-red-100 p-4 text-sm text-red-800">{msg.text}</p>}

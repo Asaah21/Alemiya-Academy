@@ -1,14 +1,15 @@
 // Checks for the staff list (Setup, Staff). This is the list of people who work at the school;
 // it is separate from login accounts (Setup, Users).
+import { checkName, checkOptionalPhone } from './validation'
 export type Check = { ok: true } | { ok: false; error: string }
 
 export type StaffInput = { full_name: string; phone: string; subject_notes: string; class_id: string }
 
 export function validateStaff(s: StaffInput): Check {
-  if (s.full_name.trim().length < 2) return { ok: false, error: 'Enter the full name.' }
-  if (s.phone.trim() && !/^[0-9+\s()-]{7,20}$/.test(s.phone.trim())) {
-    return { ok: false, error: 'The phone number looks wrong. Use digits only, for example 0241234567.' }
-  }
+  const n = checkName(s.full_name, 'full name')
+  if (!n.ok) return { ok: false, error: n.error }
+  const p = checkOptionalPhone(s.phone)
+  if (!p.ok) return { ok: false, error: p.error }
   return { ok: true }
 }
 

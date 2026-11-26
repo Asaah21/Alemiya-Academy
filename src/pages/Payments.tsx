@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
 import Receipt, { type ReceiptData } from '../features/fees/Receipt'
 import { useSchool } from '../features/school/SchoolProvider'
@@ -36,6 +36,7 @@ export default function Payments() {
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [receipt, setReceipt] = useState<ReceiptData | null>(null)
+  const [params] = useSearchParams()
 
   useEffect(() => {
     Promise.all([
@@ -44,7 +45,10 @@ export default function Payments() {
       supabase!.from('terms').select('id, name, academic_years(name)').order('start_date', { ascending: false }),
       supabase!.from('settings').select('location').maybeSingle(),
     ]).then(([s, c, t, st]) => {
-      setStudents((s.data as Student[]) ?? [])
+      const list = (s.data as Student[]) ?? []
+      setStudents(list)
+      const wanted = params.get('student')
+      if (wanted) { const hit = list.find((x) => x.id === wanted); if (hit) setStudent(hit) }
       setClasses(c.data ?? [])
       setTerms((t.data as unknown as Term[]) ?? [])
       setLocation(st.data?.location ?? '')
