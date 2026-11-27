@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { CalendarDays, Download, ExternalLink, FileText, Upload } from 'lucide-react'
+import PdfPages from '../components/PdfPages'
 import { PageHeader } from '../components/ui'
 import { useAuth } from '../features/auth/AuthProvider'
 import { useSchool } from '../features/school/SchoolProvider'
@@ -101,7 +102,7 @@ export default function Timetable() {
               </div>
               {preview && (isImage(current.content_type)
                 ? <img src={preview} alt="Timetable" className="w-full rounded-lg border border-slate-200" />
-                : <iframe src={preview} title="Timetable" className="h-[85vh] w-full rounded-lg border border-slate-200" />)}
+                : <PdfPages url={preview} />)}
               {!preview && !isImage(current.content_type) && current.content_type !== 'application/pdf' && <p className="rounded-lg bg-slate-50 p-3 text-sm font-medium text-slate-600">This kind of file cannot be shown here. Press View or Download to open it.</p>}
             </div>
           )}
