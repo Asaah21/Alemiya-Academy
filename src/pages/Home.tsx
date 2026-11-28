@@ -70,7 +70,7 @@ export default function Home() {
   const actions: { to: string; label: string; hint: string; icon: LucideIcon; admin?: boolean }[] = [
     { to: '/students/new', label: 'Add a student', hint: 'New admission', icon: UserPlus },
     { to: '/fees', label: 'Record a payment', hint: 'Cash received and receipt', icon: Receipt },
-    { to: '/scores', label: 'Enter scores', hint: 'Marks out of 100', icon: ClipboardCheck },
+    { to: '/scores', label: 'Enter scores', hint: 'Class score and exam score', icon: ClipboardCheck },
     { to: '/report-cards', label: 'Report cards', hint: 'View, print, download', icon: FileText },
     { to: '/staff-attendance', label: 'Staff attendance', hint: 'Mark today', icon: UserCog, admin: true },
     { to: '/fees/balances', label: 'Fee balances', hint: 'Who owes what', icon: Wallet },

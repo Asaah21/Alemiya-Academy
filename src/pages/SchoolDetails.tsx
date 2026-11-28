@@ -124,7 +124,7 @@ export default function SchoolDetails() {
         <label className={label}>Next term opens (printed on report cards)<input type="date" value={form.next_term_opening_date} onChange={set('next_term_opening_date')} className={input} /></label>
         <label className={label}>Class score is out of<input inputMode="decimal" value={form.class_score_max} onChange={set('class_score_max')} className={input} /></label>
         <label className={label}>Exam score is out of<input inputMode="decimal" value={form.exam_score_max} onChange={set('exam_score_max')} className={input} /></label>
-        <p className="text-xs text-slate-500">Normally 30 and 70. Together they must make 100, because grades are worked out out of 100.</p>
+        <p className="text-xs text-slate-500">Normally 30 and 70. Together they must make 100, because the total and grade are out of 100.</p>
         {msg && <p className={`rounded-lg p-3 text-sm ${msg.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
         <button className="rounded-lg bg-brand p-3 font-semibold text-white">Save</button>
       </form>
