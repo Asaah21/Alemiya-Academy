@@ -34,9 +34,9 @@ describe('gaps', () => {
 })
 
 describe('standard classes', () => {
-  it('has 14 classes from Creche to JHS 3', () => {
-    expect(STANDARD_CLASSES).toHaveLength(14)
-    expect(STANDARD_CLASSES[0].name).toBe('Creche')
-    expect(STANDARD_CLASSES[13].name).toBe('JHS 3')
+  it('has 13 classes from Nursery 1 to JHS 3', () => {
+    expect(STANDARD_CLASSES).toHaveLength(13)
+    expect(STANDARD_CLASSES[0].name).toBe('Nursery 1')
+    expect(STANDARD_CLASSES[12].name).toBe('JHS 3')
   })
 })

@@ -4,7 +4,7 @@ import { Archive, BadgeCheck, BookOpen, CalendarDays, ChevronRight, GraduationCa
 const LINKS: { to: string; label: string; hint: string; icon: LucideIcon }[] = [
   { to: '/setup/years', label: 'Current term, years and terms', hint: 'Choose the current term and edit dates', icon: CalendarDays },
   { to: '/setup/school', label: 'School info', hint: 'Name, location, circuit, score maximum', icon: School },
-  { to: '/setup/classes', label: 'Classes', hint: 'Creche to JHS 3', icon: GraduationCap },
+  { to: '/setup/classes', label: 'Classes', hint: 'Nursery 1 to JHS 3', icon: GraduationCap },
   { to: '/setup/subjects', label: 'Subjects', hint: 'Subjects taught in each class', icon: BookOpen },
   { to: '/setup/grades', label: 'Grades', hint: 'Grade bands and remarks', icon: Medal },
   { to: '/setup/fees', label: 'Fees', hint: 'What each class pays each term', icon: Wallet },

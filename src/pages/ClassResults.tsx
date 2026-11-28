@@ -85,7 +85,7 @@ export default function ClassResults() {
       {classId && termId && !loading && !error && (
         subjects.length === 0 ? (
           <>
-            <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes). Classes without scores (such as Creche) can still be published below.</p>
+            <p className="rounded-xl border border-slate-200 bg-white p-4 text-slate-600 shadow-sm">No subjects are set for this class (Setup, Classes). Classes without scores (such as Nursery) can still be published below.</p>
             {students.length > 0 && <PublishPanel classId={classId} termId={termId} complete />}
           </>
         )

@@ -27,7 +27,7 @@ export default function Classes() {
   async function createStandard() {
     const have = new Set(classes.map((c) => c.name))
     const rows = STANDARD_CLASSES.map((c, i) => ({ ...c, level_order: i + 1 })).filter((c) => !have.has(c.name))
-    if (rows.length === 0) return setMsg({ ok: true, text: 'All 14 classes already exist.' })
+    if (rows.length === 0) return setMsg({ ok: true, text: 'All 13 classes already exist.' })
     const { error } = await supabase!.from('classes').insert(rows)
     setMsg(error ? { ok: false, text: 'Could not create the classes.' } : { ok: true, text: `${rows.length} classes created.` })
     refresh()
@@ -57,7 +57,7 @@ export default function Classes() {
       {msg && <p className={`rounded-xl p-4 text-sm ${msg.ok ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
       {classes.length < STANDARD_CLASSES.length && (
         <button onClick={createStandard} className="rounded-lg bg-brand p-3 font-semibold text-white">
-          Create the 14 classes (Creche to JHS 3)
+          Create the 13 classes (Nursery 1 to JHS 3)
         </button>
       )}
       <ul className="flex flex-col gap-2">
