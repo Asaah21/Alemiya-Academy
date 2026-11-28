@@ -26,9 +26,9 @@ begin
   -- Classes: only if none exist
   if not exists (select 1 from public.classes) then
     insert into public.classes (name, level_order, scored) values
-      ('Creche',1,false),('Nursery 1',2,false),('Nursery 2',3,false),('KG 1',4,false),('KG 2',5,false),
-      ('Basic 1',6,true),('Basic 2',7,true),('Basic 3',8,true),('Basic 4',9,true),('Basic 5',10,true),('Basic 6',11,true),
-      ('JHS 1',12,true),('JHS 2',13,true),('JHS 3',14,true);
+      ('Nursery 1',1,false),('Nursery 2',2,false),('KG 1',3,true),('KG 2',4,true),
+      ('Basic 1',5,true),('Basic 2',6,true),('Basic 3',7,true),('Basic 4',8,true),('Basic 5',9,true),('Basic 6',10,true),
+      ('JHS 1',11,true),('JHS 2',12,true),('JHS 3',13,true);
   end if;
 
   -- Subjects and which class takes them (only for scored classes that have none yet)
@@ -70,7 +70,7 @@ begin
   ) as t(i, n, sb);
   select array_agg(id) into v_staff_ids from public.staff where phone like '0200000%';
 
-  -- Students: 6 in each of the first 14 classes
+  -- Students: 6 in each class
   for c in select id, level_order, scored from public.classes order by level_order limit 14 loop
     for v_i in 1..6 loop
       v_n := v_n + 1;
@@ -92,8 +92,7 @@ begin
   for c in select id, level_order from public.classes order by level_order limit 14 loop
     if not exists (select 1 from public.fee_items where class_id = c.id and term_id = v_term.id) then
       insert into public.fee_items (class_id, term_id, name, amount) values
-        (c.id, v_term.id, 'School fees', 150 + c.level_order * 15),
-        (c.id, v_term.id, 'PTA dues', 20);
+        (c.id, v_term.id, 'School fees', case when c.level_order in (1, 2, 3, 4) then 345 else 355 end);
     end if;
   end loop;
   v_i := 0;

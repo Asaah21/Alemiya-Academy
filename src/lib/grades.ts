@@ -31,9 +31,8 @@ export function gaps(rows: GradeRow[]): string[] {
   return out
 }
 
-// The 14 classes, in order. The first three are remarks-only on the report card (rule G8); the Admin can change this.
+// The 13 classes, in order. The first two (Nursery) are remarks-only on the report card (rule G8); the Admin can change this.
 export const STANDARD_CLASSES: { name: string; scored: boolean }[] = [
-  { name: 'Creche', scored: false },
   { name: 'Nursery 1', scored: false },
   { name: 'Nursery 2', scored: false },
   { name: 'KG 1', scored: true },
