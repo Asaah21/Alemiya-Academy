@@ -108,9 +108,9 @@ describe('database rules', () => {
     ).rejects.toThrow()
   })
 
-  it('G6: blocks a score above the maximum (100)', async () => {
-    await expect(db.exec(`update scores set exam_score = 101 where id = '${ids.score}'`)).rejects.toThrow(/cannot be more than 100/)
-    await expect(db.exec(`update scores set class_score = 101 where id = '${ids.score}'`)).rejects.toThrow(/cannot be more than/)
+  it('G6: blocks a score above its maximum (30 class, 70 exam)', async () => {
+    await expect(db.exec(`update scores set exam_score = 71 where id = '${ids.score}'`)).rejects.toThrow(/exam score cannot be more than 70/)
+    await expect(db.exec(`update scores set class_score = 31 where id = '${ids.score}'`)).rejects.toThrow(/class score cannot be more than 30/)
   })
 
   it('G6: blocks negative scores', async () => {

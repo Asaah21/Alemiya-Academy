@@ -129,21 +129,15 @@ describe('computeClassResults (rules G4, G5, G7)', () => {
   })
 })
 
-describe('single score out of 100', () => {
-  it('checks one mark against the maximum', async () => {
-    const { checkSingleScore } = await import('./results')
-    expect(checkSingleScore('85', false, 100)).toEqual({ score: 85, error: null })
-    expect(checkSingleScore('', false, 100)).toEqual({ score: null, error: null })
-    expect(checkSingleScore('101', false, 100).error).toMatch(/more than 100/)
-    expect(checkSingleScore('abc', false, 100).error).toBeTruthy()
-    expect(checkSingleScore('50', true, 100)).toEqual({ score: null, error: null })
+describe('class score out of 30 and exam score out of 70', () => {
+  it('checks each score against its own maximum', () => {
+    expect(checkScore({ classText: '25', examText: '60', absent: false }, 30, 70)).toEqual({ classScore: 25, examScore: 60, error: null })
+    expect(checkScore({ classText: '31', examText: '60', absent: false }, 30, 70).error).toMatch(/more than 30/)
+    expect(checkScore({ classText: '25', examText: '71', absent: false }, 30, 70).error).toMatch(/more than 70/)
   })
-  it('stores one mark as exam score with class score 0, and reads older rows as class + exam', async () => {
-    const { markToColumns, savedMark } = await import('./results')
-    expect(markToColumns(85)).toEqual({ class_score: 0, exam_score: 85 })
-    expect(markToColumns(null)).toEqual({ class_score: null, exam_score: null })
-    expect(savedMark(0, 85)).toBe(85)
-    expect(savedMark(24, 51.5)).toBe(75.5)
-    expect(savedMark(null, null)).toBeNull()
+  it('works out the total out of 100 and is finished only when both are in', () => {
+    expect(subjectTotal(25, 60, false)).toBe(85)
+    expect(isComplete(25, null, false)).toBe(false)
+    expect(isComplete(25, 60, false)).toBe(true)
   })
 })

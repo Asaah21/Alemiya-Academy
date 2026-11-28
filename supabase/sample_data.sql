@@ -145,9 +145,9 @@ begin
       v_i := v_i + 1;
       for s in select cs.subject_id, sb.name from public.class_subjects cs join public.subjects sb on sb.id = cs.subject_id where cs.class_id = c.id loop
         continue when s.name = 'Mathematics' and v_i > 4;
-        v_mark := least(100, greatest(8, round((35 + random() * 60)::numeric, 1)));
+        v_mark := least(100, greatest(8, round((35 + random() * 60)::numeric, 1)));  -- total out of 100
         insert into public.scores (student_id, subject_id, term_id, class_score, exam_score, is_absent)
-          values (st.id, s.subject_id, v_term.id, 0, v_mark, false) on conflict do nothing;
+          values (st.id, s.subject_id, v_term.id, round(v_mark * 0.3, 1), round(v_mark * 0.7, 1), false) on conflict do nothing;
       end loop;
       if v_i <= 4 then
         insert into public.report_remarks (student_id, term_id, teacher_remark, head_remark)
