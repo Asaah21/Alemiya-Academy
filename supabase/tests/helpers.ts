@@ -24,7 +24,7 @@ export async function createTestDb(): Promise<PGlite> {
   await db.exec(`
     grant usage on schema public, auth to anon, authenticated;
     grant select, insert, update, delete on all tables in schema public to anon, authenticated;
-    grant execute on all functions in schema public to anon, authenticated;
+    grant execute on all functions in schema public to authenticated;
   `)
   return db
 }

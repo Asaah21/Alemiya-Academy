@@ -13,3 +13,13 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Browser safety headers: no embedding the site in another page, no guessing file types, no sending page addresses
+# to other sites, and no camera, microphone or location use.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"

@@ -33,7 +33,7 @@ describe('parent_me', () => {
   it('returns nothing for Staff, a stranger and a logged-out visitor', async () => {
     expect(await me(id.staff)).toEqual([])
     expect(await me(id.stranger)).toEqual([])
-    expect(await me(null)).toEqual([])
+    await expect(me(null)).rejects.toThrow(/permission denied/)
   })
 
   it('returns nothing once access is stopped or the student has left', async () => {
