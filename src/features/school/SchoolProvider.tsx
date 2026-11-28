@@ -6,6 +6,7 @@ export type CurrentTerm = { id: string; name: string; start_date: string; end_da
 
 type SchoolContextValue = {
   schoolName: string
+  logoUrl: string | null
   classMax: number
   examMax: number
   currentTerm: CurrentTerm | null
@@ -15,6 +16,7 @@ type SchoolContextValue = {
 
 const SchoolContext = createContext<SchoolContextValue>({
   schoolName: '',
+  logoUrl: null,
   classMax: 30,
   examMax: 100,
   currentTerm: null,
@@ -27,6 +29,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const { state } = useAuth()
   const ready = state.status === 'ready'
   const [schoolName, setSchoolName] = useState('')
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [classMax, setClassMax] = useState(30)
   const [examMax, setExamMax] = useState(100)
   const [currentTerm, setCurrentTerm] = useState<CurrentTerm | null>(null)
@@ -35,7 +38,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(async () => {
     if (!supabase) return
     const [s, t] = await Promise.all([
-      supabase.from('settings').select('school_name, class_score_max, exam_score_max').maybeSingle(),
+      supabase.from('settings').select('school_name, logo_url, class_score_max, exam_score_max').maybeSingle(),
       supabase
         .from('terms')
         .select('id, name, start_date, end_date, academic_year_id, academic_years(name)')
@@ -43,6 +46,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         .maybeSingle(),
     ])
     setSchoolName(s.data?.school_name ?? '')
+    setLogoUrl(s.data?.logo_url ?? null)
     setClassMax(Number(s.data?.class_score_max ?? 30))
     setExamMax(Number(s.data?.exam_score_max ?? 100))
     const row = t.data as { id: string; name: string; start_date: string; end_date: string; academic_year_id: string; academic_years: { name: string } | { name: string }[] | null } | null
@@ -59,12 +63,13 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     if (ready) reload()
     else {
       setSchoolName('')
+      setLogoUrl(null)
       setCurrentTerm(null)
       setLoaded(false)
     }
   }, [ready, reload])
 
-  const value = useMemo(() => ({ schoolName, classMax, examMax, currentTerm, loaded, reload }), [schoolName, classMax, examMax, currentTerm, loaded, reload])
+  const value = useMemo(() => ({ schoolName, logoUrl, classMax, examMax, currentTerm, loaded, reload }), [schoolName, logoUrl, classMax, examMax, currentTerm, loaded, reload])
   return <SchoolContext.Provider value={value}>{children}</SchoolContext.Provider>
 }
 

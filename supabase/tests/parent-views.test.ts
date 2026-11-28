@@ -68,7 +68,7 @@ describe('parent_report', () => {
 
   it('refuses Staff, a stranger, the wrong term and a logged-out visitor', async () => {
     await expect(report(id.staff)).rejects.toThrow(/Not available/)
-    await expect(report(null)).rejects.toThrow(/Not available/)
+    await expect(report(null)).rejects.toThrow(/permission denied/)
     await expect(report(id.pAma, id.tFuture)).rejects.toThrow(/not been published/)
   })
 
