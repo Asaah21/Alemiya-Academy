@@ -12,7 +12,7 @@ const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2)
 // Frame for every logged-in screen: dark side menu, a slim top bar, and a wide content area.
 export default function Layout({ children }: { children: ReactNode }) {
   const { state, signOut } = useAuth()
-  const { schoolName, currentTerm } = useSchool()
+  const { schoolName, logoUrl, currentTerm } = useSchool()
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-ink text-white transition-transform md:translate-x-0 print:hidden ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 ring-1 ring-white/20"><GraduationCap className="h-5 w-5 text-accent" /></span>
+          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/20">{logoUrl ? <img src={logoUrl} alt="" className="h-full w-full bg-white object-contain p-0.5" /> : <GraduationCap className="h-5 w-5 text-accent" />}</span>
           <div className="min-w-0 leading-tight">
             <p className="truncate text-[15px] font-bold tracking-tight">{schoolName || 'Alemiya Academy'}</p>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent/90">School Management</p>
