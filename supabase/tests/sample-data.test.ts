@@ -15,7 +15,9 @@ describe('sample data scripts', () => {
     expect(await count(db, 'select count(*) n from staff')).toBe(6)
     expect(await count(db, 'select count(*) n from payments')).toBeGreaterThan(30)
     expect(await count(db, 'select count(*) n from scores')).toBeGreaterThan(200)
-    expect(await count(db, 'select count(*) n from fee_items')).toBe(28)
+    expect(await count(db, 'select count(*) n from fee_items')).toBe(14)
+    expect(await count(db, "select count(*) n from fee_items f join classes c on c.id = f.class_id where c.name in ('Nursery 1','Nursery 2','KG 1','KG 2') and f.amount = 345")).toBe(4)
+    expect(await count(db, 'select count(*) n from fee_items where amount = 355')).toBe(10)
     expect(await count(db, 'select count(*) n from notices')).toBe(2)
     // second run does nothing
     await db.exec(sql('sample_data.sql'))
@@ -37,5 +39,16 @@ describe('sample data scripts', () => {
     await db.exec(sql('sample_data.sql'))
     await db.exec(sql('remove_sample_data.sql'))
     expect(await count(db, 'select count(*) n from students')).toBe(1)
+  })
+
+  it('set_fees.sql gives 345 to the nursery and KG classes and 355 to the rest, and can be run again', async () => {
+    const db = await createTestDb()
+    await db.exec(sql('sample_data.sql'))
+    await db.exec(`insert into fee_items (class_id, term_id, name, amount) select id, (select id from terms where is_current), 'PTA dues', 20 from classes where name = 'JHS 1'`)
+    await db.exec(sql('set_fees.sql'))
+    await db.exec(sql('set_fees.sql'))
+    expect(await count(db, 'select count(*) n from fee_items')).toBe(14)
+    expect(await count(db, "select count(*) n from fee_items f join classes c on c.id = f.class_id where c.name in ('Nursery 1','Nursery 2','KG 1','KG 2') and f.amount = 345")).toBe(4)
+    expect(await count(db, 'select count(*) n from fee_items where amount = 355')).toBe(10)
   })
 })

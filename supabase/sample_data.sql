@@ -92,8 +92,7 @@ begin
   for c in select id, level_order from public.classes order by level_order limit 14 loop
     if not exists (select 1 from public.fee_items where class_id = c.id and term_id = v_term.id) then
       insert into public.fee_items (class_id, term_id, name, amount) values
-        (c.id, v_term.id, 'School fees', 150 + c.level_order * 15),
-        (c.id, v_term.id, 'PTA dues', 20);
+        (c.id, v_term.id, 'School fees', case when c.level_order in (2, 3, 4, 5) then 345 else 355 end);
     end if;
   end loop;
   v_i := 0;
