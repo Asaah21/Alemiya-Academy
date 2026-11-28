@@ -18,7 +18,7 @@ const SchoolContext = createContext<SchoolContextValue>({
   schoolName: '',
   logoUrl: null,
   classMax: 30,
-  examMax: 100,
+  examMax: 70,
   currentTerm: null,
   loaded: false,
   reload: async () => {},
@@ -31,7 +31,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const [schoolName, setSchoolName] = useState('')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [classMax, setClassMax] = useState(30)
-  const [examMax, setExamMax] = useState(100)
+  const [examMax, setExamMax] = useState(70)
   const [currentTerm, setCurrentTerm] = useState<CurrentTerm | null>(null)
   const [loaded, setLoaded] = useState(false)
 
@@ -48,7 +48,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     setSchoolName(s.data?.school_name ?? '')
     setLogoUrl(s.data?.logo_url ?? null)
     setClassMax(Number(s.data?.class_score_max ?? 30))
-    setExamMax(Number(s.data?.exam_score_max ?? 100))
+    setExamMax(Number(s.data?.exam_score_max ?? 70))
     const row = t.data as { id: string; name: string; start_date: string; end_date: string; academic_year_id: string; academic_years: { name: string } | { name: string }[] | null } | null
     if (row) {
       const y = Array.isArray(row.academic_years) ? row.academic_years[0] : row.academic_years
